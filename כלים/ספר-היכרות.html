@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ספר ההיכרות, סדנה 1</title>
+<!--
+  ספר ההיכרות של סדנה 1. קורא את גיליון התשובות של טופס ההיכרות בכל פתיחה.
+  סגנון: קלאסי (כריכת עור, מסגרות זהב, נייר קרם).
+  דפדוף: ספריית StPageFlip. הספרייה לא תומכת בעברית, ולכן סדר הדפים הפוך והספר נפתח מהסוף.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Bellefair&family=Gveret+Levin&family=Heebo:wght@300;400;700&family=Assistant:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+<style>
+  :root{
+    --leather:#b98a5e; --leather-dark:#96683f; --gold:#f3dfb0; --gold-soft:#fff3d6;
+    --paper:#fffaf0; --paper-edge:#efe3cc; --ink:#4a3020; --ink-soft:#8a6a50; --bg:#f4ede1;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:radial-gradient(ellipse at center,#fbf7ef 0%,var(--bg) 75%);color:var(--ink);font-family:"Heebo",sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+  .stage{position:relative;width:min(1100px,92vw);height:min(720px,82vh);display:flex;align-items:center;justify-content:center}
+  #book{width:100%;height:100%;filter:drop-shadow(0 14px 30px rgba(120,85,50,.22))}
+  .nav{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:1px solid var(--leather);background:#fff;color:var(--leather-dark);font-size:1.6rem;line-height:1;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center}
+  .nav:hover,.nav:focus-visible{background:var(--paper-edge);outline:2px solid var(--leather);outline-offset:2px}
+  .nav.prev{right:-70px} .nav.next{left:-70px}
+  .sound{position:fixed;top:14px;left:16px;background:#fff;border:1px solid var(--paper-edge);color:var(--ink-soft);font:400 .95rem "Assistant","Heebo",sans-serif;border-radius:999px;padding:6px 14px;cursor:pointer;z-index:20}
+  .sound:focus-visible{outline:2px solid var(--gold-soft);outline-offset:2px}
+  .msg{color:var(--ink-soft);font-family:"Assistant","Heebo",sans-serif;font-size:1.2rem;text-align:center;padding:24px;max-width:520px;line-height:1.6}
+
+  /* ---------- עמודים ---------- */
+  .page{background:var(--paper);overflow:hidden}
+  .page .inner{position:absolute;inset:0;padding:7% 8%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:
+      radial-gradient(ellipse at center,rgba(255,255,255,.35),transparent 70%),
+      linear-gradient(90deg,rgba(0,0,0,.06),transparent 6%,transparent 94%,rgba(0,0,0,.06))}
+
+  /* כריכה: עור עם מרקם עדין ושתי מסגרות זהב */
+  .page.cover{background:var(--leather)}
+  .page.cover .inner{background:
+      radial-gradient(circle at 30% 20%,rgba(255,255,255,.07),transparent 45%),
+      repeating-radial-gradient(circle at 50% 50%,rgba(0,0,0,.05) 0 1px,transparent 1px 3px),
+      linear-gradient(135deg,var(--leather) 0%,var(--leather-dark) 100%);color:var(--gold)}
+  .frame1,.frame2{position:absolute;border:1.5px solid var(--gold);pointer-events:none}
+  .frame1{inset:5%} .frame2{inset:7%;border-width:1px;opacity:.7}
+  .cover h1{font-family:"Suez One","Heebo",sans-serif;font-weight:400;font-size:clamp(2.2rem,4.6vw,3.6rem);margin:0 0 .3em;color:#fff;text-shadow:0 1px 2px rgba(90,55,25,.35);letter-spacing:.02em}
+  .cover .sub{font-family:"Bellefair","Heebo",sans-serif;font-size:clamp(1.1rem,2vw,1.5rem);color:var(--gold);max-width:80%;line-height:1.4}
+  .cover .orn{width:90px;height:14px;margin:18px auto}
+  .credit{position:absolute;bottom:11%;left:0;right:0;text-align:center;font:400 .85rem "Assistant","Heebo",sans-serif;color:rgba(255,243,214,.85)}
+  .credit a{color:inherit}
+
+  /* עמוד משתתף */
+  .photo{width:62%;aspect-ratio:1;background:#fff;padding:3.5%;box-shadow:0 2px 6px rgba(59,36,22,.25);border:1px solid var(--paper-edge);flex-shrink:0}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo b{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--paper-edge);font-family:"Suez One","Heebo",sans-serif;font-weight:400;font-size:clamp(3rem,7vw,5rem);color:var(--ink-soft)}
+  .person h2{font-family:"Suez One","Heebo",sans-serif;font-weight:400;font-size:clamp(1.5rem,2.8vw,2.2rem);margin:.5em 0 .1em;color:var(--ink)}
+  .person .who{font-family:"Bellefair","Heebo",sans-serif;font-size:clamp(1rem,1.7vw,1.25rem);color:var(--ink-soft);margin:0 0 .5em}
+  .person .cap{font-family:"Gveret Levin","Heebo",sans-serif;font-size:clamp(1.15rem,2vw,1.5rem);line-height:1.35;color:var(--ink);margin:.25em 0 0;max-width:92%}
+  .person .cap small{display:block;font-family:"Bellefair","Heebo",sans-serif;font-size:.7em;color:var(--ink-soft);letter-spacing:.03em}
+  .pnum{position:absolute;bottom:4%;left:0;right:0;text-align:center;font-family:"Bellefair","Heebo",sans-serif;font-size:.9rem;color:var(--ink-soft)}
+  .ornament svg{width:40%;max-width:180px;opacity:.55}
+
+  @media (max-width:760px){
+    .stage{width:94vw;height:80vh}
+    .nav{display:none}
+  }
+</style>
+</head>
+<body>
+<button class="sound" id="sound" type="button" aria-pressed="true">צליל: פועל</button>
+<div class="stage" id="stage">
+  <button class="nav prev" id="prev" type="button" aria-label="לעמוד הקודם">&#8594;</button>
+  <div id="book"><p class="msg">טוען את ספר ההיכרות...</p></div>
+  <button class="nav next" id="next" type="button" aria-label="לעמוד הבא">&#8592;</button>
+</div>
+
+<script>
+  // גיליון התשובות של טופס ההיכרות
+  const SHEET_ID = '1DFhU2YZwURifdWEuPj4uEb-8L2ViUnSsEsdNHYNyK28';
+  const TITLE = 'מי איתנו';
+  const SUBTITLE = 'ספר ההיכרות של סדנה 1, נובמבר 2026';
+  const ERROR_TEXT = 'לא הצלחנו לקרוא את הגיליון, בדקו שהוא משותף לצפייה';
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ORN = '<svg viewBox="0 0 180 28" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 14h60M118 14h60"/><path d="M90 4c-10 0-14 10-24 10 10 0 14 10 24 10 10 0 14-10 24-10-10 0-14-10-24-10z"/><circle cx="90" cy="14" r="2.4" fill="currentColor"/></svg>';
+
+  function loadSheet() {
+    return new Promise((resolve, reject) => {
+      const cb = 'sheetCb_' + Date.now();
+      const s = document.createElement('script');
+      let done = false;
+      const timer = setTimeout(() => finish(new Error('timeout')), 10000);
+      function finish(err, data) { if (done) return; done = true; clearTimeout(timer); delete window[cb]; s.remove(); err ? reject(err) : resolve(data); }
+      window[cb] = r => (!r || r.status === 'error' || !r.table) ? finish(new Error('bad')) : finish(null, r.table);
+      s.onerror = () => finish(new Error('script'));
+      s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?headers=1&tqx=out:json;responseHandler:${cb}`;
+      document.body.appendChild(s);
+    });
+  }
+  // העמודות לפי הסדר בטופס: חותמת זמן, שם, מה אני עושה, מאיפה, משהו שלא יודעים, מה הייתי רוצה לבנות, תמונה
+  function toPeople(table) {
+    return table.rows.map(r => {
+      const v = i => { const c = r.c && r.c[i]; return c ? String(c.f != null ? c.f : (c.v != null ? c.v : '')).trim() : ''; };
+      return { name: v(1), role: v(2), from: v(3), fact: v(4), build: v(5), photo: v(6) };
+    }).filter(p => p.name);
+  }
+  function driveImg(u) {
+    u = String(u || '').split(',')[0].trim();
+    const m = u.match(/[?&]id=([\w-]{20,})/) || u.match(/\/d\/([\w-]{20,})/);
+    return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200` : (/^(https?|file):/.test(u) ? u : '');
+  }
+
+  // ---------- בניית הדפים (בסדר עברי, ואז הפיכה) ----------
+  function coverHTML(back) {
+    return `<div class="page cover" data-density="hard"><div class="inner"><span class="frame1"></span><span class="frame2"></span>
+      ${back ? `<div class="orn" style="color:var(--gold)">${ORN}</div>
+        <p class="credit">נוצר על ידי <a href="https://www.lomdot.org/" target="_blank" rel="noopener">שירה רוט זליקוביץ</a></p>`
+      : `<h1>${esc(TITLE)}</h1><div class="orn" style="color:var(--gold)">${ORN}</div>${SUBTITLE ? `<p class="sub">${esc(SUBTITLE)}</p>` : ''}`}
+    </div></div>`;
+  }
+  function personHTML(p, n) {
+    const img = driveImg(p.photo);
+    const init = esc(p.name.charAt(0));
+    const who = [p.role, p.from].filter(Boolean).join(' · ');
+    return `<div class="page"><div class="inner person">
+      <div class="photo">${img ? `<img src="${esc(img)}" alt="${esc(p.name)}" onerror="this.outerHTML='<b>${init}</b>'">` : `<b>${init}</b>`}</div>
+      <h2>${esc(p.name)}</h2>
+      ${who ? `<p class="who">${esc(who)}</p>` : ''}
+      ${p.fact ? `<p class="cap"><small>משהו שלא יודעים עליי</small>${esc(p.fact)}</p>` : ''}
+      ${p.build ? `<p class="cap"><small>מה הייתי רוצה לבנות</small>${esc(p.build)}</p>` : ''}
+      <span class="pnum">${n}</span></div></div>`;
+  }
+  const blankHTML = () => `<div class="page"><div class="inner"></div></div>`;          // פנים הכריכה, ריק כמו בספר אמיתי
+  const ornHTML = () => `<div class="page"><div class="inner ornament" style="color:var(--ink-soft)">${ORN}</div></div>`;
+
+  function buildPages(people) {
+    // כריכה, פנים כריכה ריק, עמוד לכל משתתף, עמוד עיטור אם צריך כדי שהכריכה האחורית תעמוד לבד, כריכה אחורית
+    const pages = [coverHTML(false), blankHTML(), ...people.map((p, i) => personHTML(p, i + 1))];
+    if ((pages.length + 1) % 2) pages.push(ornHTML());
+    pages.push(coverHTML(true));
+    return pages.reverse();   // StPageFlip קורא משמאל לימין, לכן הופכים
+  }
+
+  // ---------- צליל דפדוף: רעש לבן קצר דרך מסנן, נוצר בדפדפן ----------
+  let audio = null, soundOn = true;
+  function wakeAudio() {
+    if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; } }
+    if (audio.state === 'suspended') audio.resume();
+  }
+  ['pointerdown', 'keydown', 'touchstart'].forEach(ev => window.addEventListener(ev, wakeAudio, { passive: true }));
+  function rustle() {
+    if (!soundOn || !audio || audio.state !== 'running') return;
+    const dur = 0.22 + Math.random() * 0.12, sr = audio.sampleRate;
+    const buf = audio.createBuffer(1, Math.floor(sr * dur), sr), d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) { const t = i / d.length; d[i] = (Math.random() * 2 - 1) * Math.min(1, t * 25) * Math.pow(1 - t, 2.2); }
+    const src = audio.createBufferSource(); src.buffer = buf;
+    const f = audio.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1500 + Math.random() * 2500; f.Q.value = 0.8;
+    const g = audio.createGain(); g.gain.value = 0.1 + Math.random() * 0.06;
+    src.connect(f).connect(g).connect(audio.destination); src.start();
+  }
+  const soundBtn = document.getElementById('sound');
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? 'צליל: פועל' : 'צליל: כבוי';
+    soundBtn.setAttribute('aria-pressed', soundOn);
+  });
+
+  // ---------- הספר ----------
+  function showError(text) { document.getElementById('stage').innerHTML = `<p class="msg">${esc(text)}</p>`; }
+
+  loadSheet().then(table => {
+    if (!window.St || !St.PageFlip) { showError('ספריית הדפדוף לא נטענה. בדקו את החיבור לאינטרנט ורעננו את הדף.'); return; }
+    const html = buildPages(toPeople(table));
+    const bookEl = document.getElementById('book');
+    bookEl.innerHTML = html.join('');
+    const flip = new St.PageFlip(bookEl, {
+      width: 480, height: 640, size: 'stretch',
+      minWidth: 260, maxWidth: 560, minHeight: 360, maxHeight: 760,
+      showCover: true, usePortrait: true, mobileScrollSupport: false,
+      maxShadowOpacity: 0.5, flippingTime: 900,
+      startPage: html.length - 1          // הכריכה הקדמית, שהיא העמוד האחרון אחרי ההיפוך
+    });
+    flip.loadFromHTML(bookEl.querySelectorAll('.page'));
+    flip.on('changeState', e => { if (e.data === 'flipping') rustle(); });
+    // בעברית "קדימה" הוא אחורה בספרייה
+    const fwd = () => flip.flipPrev(), back = () => flip.flipNext();
+    document.getElementById('next').addEventListener('click', fwd);
+    document.getElementById('prev').addEventListener('click', back);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); fwd(); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); back(); }
+    });
+  }).catch(() => showError(ERROR_TEXT));
+</script>
+</body>
+</html>
