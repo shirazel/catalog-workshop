@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>דף הקישורים שלנו</title>
+<style>
+  :root{--teal:#14a3a3;--teal-dark:#0e7c7c;--orange:#f28c28;--bg:#f6fbfb;--card:#fff;--text:#23353a;--muted:#6b7f84}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Rubik","Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+  header{background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:#fff;padding:32px 16px 56px;text-align:center}
+  header h1{margin:0;font-size:2rem}
+  .search-wrap{max-width:640px;margin:-28px auto 0;padding:0 16px}
+  #search{width:100%;padding:14px 18px;font-size:1.05rem;border:2px solid transparent;border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.08);outline:none;font-family:inherit}
+  #search:focus{border-color:var(--orange)}
+  main{max-width:1000px;margin:24px auto;padding:0 16px 40px}
+  .cat h2{color:var(--teal-dark);border-bottom:3px solid var(--orange);display:inline-block;padding-bottom:4px;margin:28px 0 14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  a.btn{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:16px;padding:16px 18px;text-decoration:none;color:inherit;box-shadow:0 2px 10px rgba(0,0,0,.06);border-right:5px solid var(--orange);transition:transform .15s,box-shadow .15s}
+  a.btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.1)}
+  .icon{width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#e6f4f4}
+  .txt b{display:block;font-size:1.1rem;margin-bottom:4px}
+  .txt span{color:var(--muted);font-size:.92rem}
+  .msg{text-align:center;padding:40px 16px;color:var(--muted);font-size:1.1rem}
+  .msg.error{color:#b3261e;background:#fdecea;border-radius:12px}
+</style>
+</head>
+<body>
+<header><h1>הקישורים של כיתה ה'2</h1></header>
+<div class="search-wrap"><input id="search" type="search" placeholder="חיפוש קישור..." aria-label="חיפוש"></div>
+<main id="content"><div class="msg">טוען קישורים...</div></main>
+
+<script>
+  // ===== הגדרות =====
+  // הגיליון לדוגמה: דף קישורים לדוגמה - סדנה 1
+  const SHEET_ID = '1timoPjk6UOEfiN4KgoWuThuqb989z8sEpym-i0A2wto';
+  const GID = '0';
+  const ERROR_TEXT = 'לא הצלחנו לקרוא את הגיליון, בדקו שהוא משותף לצפייה';
+
+  let allRows = [];
+
+  // קריאת הגיליון בשיטת JSONP (עובד גם בפתיחה ישירה מהמחשב)
+  function loadSheet() {
+    return new Promise((resolve, reject) => {
+      const cbName = 'sheetCallback_' + Date.now();
+      let finished = false;
+      const script = document.createElement('script');
+      const timer = setTimeout(() => fail(new Error('timeout')), 10000);
+      function cleanup() { clearTimeout(timer); delete window[cbName]; script.remove(); }
+      function fail(err) { if (finished) return; finished = true; cleanup(); reject(err); }
+      window[cbName] = (resp) => {
+        if (finished) return; finished = true; cleanup();
+        if (!resp || resp.status === 'error' || !resp.table) return reject(new Error('bad response'));
+        resolve(resp.table);
+      };
+      script.onerror = () => fail(new Error('script error'));
+      script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${GID}&headers=1&tqx=out:json;responseHandler:${cbName}`;
+      document.body.appendChild(script);
+    });
+  }
+
+  function tableToObjects(table) {
+    const headers = table.cols.map(c => (c.label || '').trim());
+    return table.rows.map(r => {
+      const o = {};
+      headers.forEach((h, i) => {
+        const cell = r.c && r.c[i];
+        o[h] = cell ? String(cell.f != null ? cell.f : (cell.v != null ? cell.v : '')).trim() : '';
+      });
+      return o;
+    }).filter(o => o['שם'] || o['קישור']);
+  }
+
+  // המרת קישור גוגל דרייב לכתובת תמונה
+  function driveToImage(url) {
+    if (!url) return '';
+    const m = url.match(/\/d\/([\w-]{10,})/) || url.match(/[?&]id=([\w-]{10,})/);
+    if (/drive\.google\.com|docs\.google\.com/.test(url) && m) {
+      return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w200`;
+    }
+    return url;
+  }
+
+  function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function render() {
+    const q = document.getElementById('search').value.trim().toLowerCase();
+    const rows = allRows.filter(r => !q || [r['שם'], r['תיאור קצר'], r['קטגוריה']].join(' ').toLowerCase().includes(q));
+    const content = document.getElementById('content');
+    if (!rows.length) { content.innerHTML = '<div class="msg">לא נמצאו קישורים</div>'; return; }
+    const groups = {};
+    rows.forEach(r => { const c = r['קטגוריה'] || 'כללי'; (groups[c] = groups[c] || []).push(r); });
+    content.innerHTML = Object.keys(groups).map(cat => `
+      <section class="cat">
+        <h2>${esc(cat)}</h2>
+        <div class="grid">
+          ${groups[cat].map(r => {
+            const img = driveToImage(r['תמונה']);
+            return `<a class="btn" href="${esc(r['קישור'])}" target="_blank" rel="noopener">
+              ${img ? `<img class="icon" src="${esc(img)}" alt="" onerror="this.style.display='none'">` : ''}
+              <div class="txt"><b>${esc(r['שם'])}</b>${r['תיאור קצר'] ? `<span>${esc(r['תיאור קצר'])}</span>` : ''}</div>
+            </a>`;
+          }).join('')}
+        </div>
+      </section>`).join('');
+  }
+
+  document.getElementById('search').addEventListener('input', render);
+
+  loadSheet()
+    .then(table => { allRows = tableToObjects(table); render(); })
+    .catch(() => { document.getElementById('content').innerHTML = `<div class="msg error">${ERROR_TEXT}</div>`; });
+</script>
+</body>
+</html>
