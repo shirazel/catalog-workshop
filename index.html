@@ -232,6 +232,12 @@ h3{font-size:40px;font-weight:700;color:var(--lm-blue-deep)}
 .qrcard .qrlink{display:block;direction:ltr;font-size:15px;line-height:1.35;word-break:break-all;color:var(--lm-blue-deep);margin:10px 0 12px;text-align:left}
 .qrcard .qrcopy{margin-top:12px;font:800 22px var(--lm-font);background:var(--lm-orange);color:var(--lm-ink);border:0;border-radius:10px;padding:10px 18px;cursor:pointer;width:100%}
 .qrcard .qrcopy.done{background:var(--lm-teal)}
+.codecard{cursor:pointer;transition:transform .15s,box-shadow .15s}
+.codecard:hover{transform:translateY(-4px);box-shadow:0 0 0 4px var(--lm-teal),var(--shadow)}
+.card .seecode{font-style:normal;font-weight:800;font-size:26px;color:var(--lm-blue-deep);margin-top:auto}
+.pmodal .colsrow[hidden],.pmodal .tipline[hidden]{display:none}
+.pmodal .prompt pre.code{direction:ltr;text-align:left;font-family:Consolas,monospace;font-size:26px;line-height:1.5;color:#1d3d52}
+.cta.ghost{background:#fff;color:var(--lm-blue-deep);box-shadow:inset 0 0 0 3px var(--lm-blue-deep)}
 </style>
 </head>
 <body>
@@ -391,6 +397,15 @@ var FORMULA = '={"פרומפט לתמונה";ARRAYFORMULA(IF(B2:B="","",\n"אי�
 var FORM_LINK = 'https://docs.google.com/forms/d/e/1FAIpQLScgVant014806ZudhkEARDsM3pCyE5bUcDOfAQ30t20OurtnA/viewform';
 var QR_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="450" height="450" class="segno"><g transform="scale(10)"><path fill="#fff" d="M0 0h45v45h-45z"/><path class="qrline" stroke="#303030" d="M2 2.5h7m1 0h1m3 0h4m1 0h3m3 0h1m1 0h3m2 0h2m2 0h7m-41 1h1m5 0h1m1 0h1m9 0h3m1 0h1m1 0h2m3 0h1m1 0h2m1 0h1m5 0h1m-41 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h3m4 0h2m1 0h6m1 0h1m3 0h1m1 0h3m1 0h1m-41 1h1m1 0h3m1 0h1m3 0h1m1 0h4m2 0h1m3 0h1m1 0h2m2 0h1m3 0h1m1 0h1m1 0h3m1 0h1m-41 1h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h2m4 0h3m5 0h4m3 0h1m1 0h3m1 0h1m-41 1h1m5 0h1m5 0h1m1 0h1m1 0h1m3 0h1m2 0h4m2 0h1m2 0h1m1 0h1m5 0h1m-41 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-29 1h1m2 0h2m2 0h2m1 0h2m1 0h1m4 0h3m-33 1h1m2 0h6m1 0h5m1 0h2m1 0h1m2 0h1m1 0h1m1 0h4m1 0h1m1 0h1m2 0h1m1 0h3m-37 1h2m5 0h1m1 0h1m2 0h1m1 0h3m1 0h2m1 0h3m2 0h2m3 0h2m2 0h1m-40 1h3m1 0h1m1 0h2m1 0h1m2 0h1m4 0h1m3 0h1m1 0h2m2 0h1m6 0h3m1 0h1m-37 1h3m2 0h1m2 0h1m1 0h1m3 0h3m1 0h1m2 0h1m3 0h1m1 0h5m1 0h1m1 0h1m2 0h1m-39 1h1m1 0h1m1 0h2m2 0h3m1 0h3m1 0h1m1 0h1m3 0h2m2 0h2m2 0h1m1 0h2m3 0h2m-41 1h1m2 0h3m2 0h2m2 0h4m3 0h1m3 0h1m1 0h1m1 0h2m1 0h1m2 0h2m1 0h1m2 0h1m-40 1h1m2 0h1m1 0h2m2 0h1m1 0h1m6 0h1m2 0h1m2 0h1m2 0h1m3 0h1m1 0h2m1 0h1m3 0h1m-39 1h4m2 0h2m4 0h1m1 0h1m2 0h1m3 0h2m3 0h1m1 0h1m2 0h1m1 0h4m-39 1h1m4 0h2m1 0h1m1 0h1m4 0h3m1 0h2m1 0h4m2 0h1m4 0h1m3 0h1m-37 1h2m1 0h2m1 0h1m2 0h2m1 0h1m1 0h1m3 0h2m1 0h1m3 0h2m1 0h1m2 0h2m2 0h1m1 0h1m-38 1h3m2 0h1m2 0h1m1 0h1m1 0h4m2 0h1m1 0h3m3 0h1m1 0h3m3 0h3m2 0h1m-41 1h1m2 0h3m1 0h1m1 0h1m2 0h1m1 0h5m6 0h1m1 0h1m3 0h4m1 0h1m1 0h1m1 0h1m-41 1h1m1 0h1m1 0h4m2 0h3m1 0h3m3 0h3m3 0h2m1 0h4m1 0h1m1 0h1m1 0h3m-39 1h1m2 0h1m1 0h3m1 0h2m3 0h1m1 0h5m2 0h2m2 0h4m2 0h4m-39 1h4m2 0h4m1 0h6m3 0h1m1 0h2m1 0h1m1 0h1m5 0h4m1 0h1m-37 1h2m5 0h1m2 0h2m2 0h3m3 0h1m3 0h1m1 0h2m1 0h3m1 0h2m2 0h1m-39 1h2m3 0h1m4 0h1m1 0h2m1 0h1m2 0h2m2 0h2m2 0h2m3 0h1m1 0h2m3 0h2m-39 1h2m1 0h1m3 0h1m4 0h5m2 0h1m1 0h1m1 0h3m2 0h1m1 0h1m2 0h2m1 0h3m-41 1h1m1 0h1m1 0h1m1 0h3m1 0h4m1 0h1m2 0h3m6 0h1m2 0h3m1 0h1m1 0h2m1 0h2m-40 1h1m1 0h1m1 0h1m3 0h1m1 0h1m1 0h2m3 0h2m2 0h2m3 0h2m2 0h1m1 0h7m-40 1h5m1 0h1m2 0h1m1 0h1m3 0h1m2 0h2m2 0h2m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m1 0h1m1 0h1m-40 1h2m6 0h3m1 0h4m1 0h1m7 0h1m1 0h1m1 0h5m2 0h1m2 0h1m-40 1h2m1 0h6m2 0h2m4 0h3m2 0h2m1 0h4m1 0h4m5 0h2m-41 1h2m1 0h1m1 0h1m1 0h1m1 0h1m2 0h1m1 0h2m3 0h2m1 0h2m1 0h1m1 0h2m3 0h1m1 0h2m1 0h2m-39 1h8m1 0h3m1 0h2m2 0h3m1 0h1m1 0h1m1 0h3m3 0h10m-33 1h1m1 0h1m1 0h4m5 0h4m1 0h5m1 0h1m3 0h4m-40 1h7m1 0h2m4 0h5m1 0h1m1 0h2m1 0h1m1 0h2m3 0h1m1 0h1m1 0h3m-39 1h1m5 0h1m1 0h1m2 0h1m3 0h3m2 0h4m5 0h1m1 0h2m3 0h2m1 0h1m-40 1h1m1 0h3m1 0h1m1 0h7m2 0h3m1 0h1m1 0h2m6 0h7m-38 1h1m1 0h3m1 0h1m1 0h2m6 0h2m2 0h1m2 0h1m2 0h3m3 0h1m2 0h1m1 0h2m1 0h1m-41 1h1m1 0h3m1 0h1m2 0h1m1 0h1m2 0h1m4 0h1m2 0h1m3 0h2m1 0h2m2 0h1m1 0h4m1 0h1m-41 1h1m5 0h1m2 0h1m1 0h1m3 0h1m1 0h2m4 0h2m3 0h1m4 0h2m1 0h1m1 0h1m1 0h1m-41 1h7m1 0h1m1 0h1m3 0h1m2 0h2m1 0h1m1 0h4m2 0h1m3 0h1m3 0h2"/></g></svg>';
 var SHEET_LINK = 'https://docs.google.com/spreadsheets/d/1DFhU2YZwURifdWEuPj4uEb-8L2ViUnSsEsdNHYNyK28/edit';
+// דוגמאות קוד לשקף "הקוד הוא הבגד", נפתחות בלחיצה על כרטיס
+var CODES = [];
+var CODE_HTML = {title:'HTML: מה יש בדף', desc:'כרטיס אחד בקטלוג. כל תגית אומרת לדפדפן מה זה: כותרת, תמונה, פסקה, כפתור.', code:
+'<div class="card">\n  <img src="escape-room.jpg" alt="חדר בריחה">\n  <h3>חידון בריחה בכיתה</h3>\n  <p>חדר בריחה של 30 דקות בנושא השיעור</p>\n  <span class="tag">משחקים</span>\n  <a class="btn" href="...">להרשמה</a>\n</div>'};
+var CODE_CSS = {title:'CSS: איך זה נראה', desc:'אותו כרטיס, עכשיו עם צבע, פינות מעוגלות, צל ותנועה קטנה כשעוברים עליו עם העכבר.', code:
+'.card {\n  background: white;\n  border-radius: 16px;\n  box-shadow: 0 4px 12px rgba(0,0,0,.1);\n  padding: 20px;\n}\n.card:hover {\n  transform: translateY(-4px);\n}\n.btn {\n  background: #FA7548;\n  color: #303030;\n  border-radius: 8px;\n}'};
+var CODE_JS = {title:'JavaScript: מה זה עושה', desc:'הדף שואל את הגיליון מה יש בו, ובונה כרטיס לכל שורה. כך שורה חדשה בגיליון הופכת לכרטיס חדש בדף.', code:
+'// קוראים את הגיליון\nvar url = "https://docs.google.com/spreadsheets/d/.../gviz/tq";\n\n// לכל שורה בגיליון, בונים כרטיס\nrows.forEach(function (row) {\n  var card = document.createElement("div");\n  card.className = "card";\n  card.innerHTML = "<h3>" + row["שם"] + "</h3>" +\n                   "<p>" + row["תיאור קצר"] + "</p>";\n  catalog.appendChild(card);\n});'};
+var SAMPLE_SHEET = 'https://docs.google.com/spreadsheets/d/1947zg_vVB_2RYHRnokZmGFPxEGWKIT8mVMBCNeLbXQc/edit';
 var WALL_FILE = 'כלים/קיר-היכרות.html';
 
 var OPENING_PROMPT = [
@@ -441,15 +456,15 @@ var SLIDES = [
 
  {kind:'wear', hint:'מה נלמד הערב', num:'01', eyebrow:'שלב ראשון', title:'גוגל שיטס שלובש <span class="mark">עיצוב של קוד</span>',
   lede:'התוכן נשאר בגיליון שאתם כבר מכירים. הקוד הוא הבגד: הוא נותן לגיליון עיצוב, אפקטים וכפתורים. מחליפים שורה בגיליון, והבגד מתאים את עצמו לבד.'},
- {kind:'trio', cls:'soft', hint:'איך זה עובד', num:'02', eyebrow:'שלב שני', title:'איך זה עובד',
+ {kind:'trio', cls:'soft', hint:'איך זה עובד', num:'02', link:SAMPLE_SHEET, linkText:'הגיליון לדוגמה', eyebrow:'שלב שני', title:'איך זה עובד',
   lede:'הגיליון הוא התוכן. הדף הוא התצוגה. ביניהם עובר קישור אחד, ובכל פעם שפותחים את הדף, הוא שואל את הגיליון מה חדש.'},
 
  {kind:'cards', hint:'הקוד הוא הבגד', eyebrow:'ממה עשוי הבגד', title:'הקוד הוא <span class="mark">הבגד</span>',
   lede:'הבגד שהגיליון לובש תפור משלוש שכבות, כמו כל דף אינטרנט שראיתם אי פעם. לא צריך לכתוב אותן, ה-AI כותב. רק כדאי להכיר.',
   cols:3, items:[
-   {k:'HTML', h:'מה יש בדף', p:'כותרת, פסקה, תמונה, כפתור. הגזרה של הבגד.'},
-   {k:'CSS', h:'איך זה נראה', p:'צבעים, גדלים, מיקום ואנימציה. הבד והצבע.'},
-   {k:'JavaScript', h:'מה זה עושה', p:'לחיצה, חיפוש, סינון, וקריאת הגיליון. הכפתורים והרוכסנים.'}]},
+   {k:'HTML', h:'מה יש בדף', p:'כותרת, פסקה, תמונה, כפתור. הגזרה של הבגד.', code:CODE_HTML},
+   {k:'CSS', h:'איך זה נראה', p:'צבעים, גדלים, מיקום ואנימציה. הבד והצבע.', code:CODE_CSS},
+   {k:'JavaScript', h:'מה זה עושה', p:'לחיצה, חיפוש, סינון, וקריאת הגיליון. הכפתורים והרוכסנים.', code:CODE_JS}]},
 
  {kind:'steps', hint:'מתחת למכסה', eyebrow:'הדגמה קצרה', title:'מסתכלים מתחת <span class="mark">למכסה</span>',
   lede:'לא צריך לכתוב קוד, אבל כדאי פעם אחת לראות אותו.',
@@ -601,8 +616,9 @@ var R = {
    var k=SLIDES.findIndex(function(x){return x.num===g[0]||(g[0]==='09'&&x.kind==='moment')});
    return '<a href="#'+(k+1)+'" data-go="'+k+'"><b>'+g[0]+'</b><span>'+g[1]+'</span></a>'}).join('')+'</div>'},
  cards:function(s){return head(s)+lede(s)+'<div class="cards c'+s.cols+'">'+s.items.map(function(it){
-   return '<div class="card">'+(it.pic?'<div class="pic" style="background-image:url('+it.pic+')"></div>':'')+(it.k?'<div class="k">'+it.k+'</div>':'')+
-     '<h4>'+it.h+'</h4>'+(it.p?'<p>'+it.p+'</p>':'')+(it.ul?'<ul>'+it.ul.map(function(l){return '<li>'+l+'</li>'}).join('')+'</ul>':'')+'</div>'}).join('')+'</div>'},
+   var ci=it.code?CODES.push(it.code)-1:-1;
+   return '<div class="card'+(ci>=0?' codecard" data-code="'+ci+'"':'"')+'>'+(it.pic?'<div class="pic" style="background-image:url('+it.pic+')"></div>':'')+(it.k?'<div class="k">'+it.k+'</div>':'')+
+     '<h4>'+it.h+'</h4>'+(it.p?'<p>'+it.p+'</p>':'')+(ci>=0?'<em class="seecode">לחצו לראות קוד</em>':'')+(it.ul?'<ul>'+it.ul.map(function(l){return '<li>'+l+'</li>'}).join('')+'</ul>':'')+'</div>'}).join('')+'</div>'},
  checks:function(s){return head(s)+lede(s)+'<ul class="checks">'+s.items.map(function(i){return '<li>'+i+'</li>'}).join('')+'</ul>'},
  steps:function(s){return head(s)+lede(s)+'<ol class="steps">'+s.steps.map(function(i){return '<li><div>'+i+'</div></li>'}).join('')+'</ol>'},
  trio:function(s){return head(s)+lede(s)+'<div class="trio">'+
@@ -615,7 +631,8 @@ var R = {
    '<div class="caption">הצינור<em>הנתונים עוברים כטקסט</em></div></div>'+
    '<div class="arrow">&larr;</div>'+
    '<div><div class="screen"><div class="bar">הדף</div><div class="body"><div class="mini-cards"><div><i></i>חדר בריחה</div><div><i></i>ספרייה כיתתית</div><div><i></i>מילון מושגים</div><div><i style="background:#E5E633"></i>שורה חדשה</div></div></div></div>'+
-   '<div class="caption">התצוגה<em>הקוד, שנבנה פעם אחת</em></div></div></div>'},
+   '<div class="caption">התצוגה<em>הקוד, שנבנה פעם אחת</em></div></div></div>'+
+   (s.link?'<div class="row" style="margin-top:22px"><a class="cta" style="padding:20px 44px;font-size:30px" href="'+s.link+'" target="_blank" rel="noopener">'+s.linkText+'</a><a class="cta ghost" style="padding:20px 44px;font-size:30px" href="'+SHEET_LINK+'" target="_blank" rel="noopener">גיליון התשובות מטופס ההיכרות</a></div>':'')},
  dodont:function(s){return head(s)+lede(s)+'<div class="dodont"><div class="card yes"><h4>שמים בגיליון</h4><ul>'+s.yes.map(function(i){return '<li>'+i+'</li>'}).join('')+
    '</ul></div><div class="card no"><h4>לא שמים בגיליון</h4><ul>'+s.no.map(function(i){return '<li>'+i+'</li>'}).join('')+'</ul></div></div><div class="rule">'+s.rule+'</div>'},
  prompt:function(s){var code=s.code||OPENING_PROMPT;return head(s)+'<div class="split"><div><ol class="steps">'+s.steps.map(function(i){return '<li><div>'+i+'</div></li>'}).join('')+'</ol>'+
@@ -658,8 +675,18 @@ var pm=document.createElement('div'); pm.className='pmodal'; pm.hidden=true;
 pm.innerHTML='<div class="box"><button class="x" aria-label="סגירה">×</button><h2></h2><p class="d"></p><div class="colsrow"></div>'+
   '<div class="prompt"><div class="top"><span>פרומפט, מעתיקים ומדביקים בכלי ה-AI</span><button class="copy">העתקה</button></div><pre></pre></div><div class="tipline"></div></div>';
 canvas.appendChild(pm);
+function openCode(i){
+  var c=CODES[i];
+  pm.querySelector('h2').textContent=c.title; pm.querySelector('.d').textContent=c.desc;
+  pm.querySelector('.colsrow').hidden=true; pm.querySelector('.tipline').hidden=true;
+  pm.querySelector('.top span').textContent='קוד לדוגמה';
+  var pre=pm.querySelector('pre'); pre.textContent=c.code; pre.className='code';
+  pm.hidden=false;
+}
 function openIdea(i){
   var it=IDEAS[i];
+  pm.querySelector('.colsrow').hidden=false; pm.querySelector('pre').className='';
+  pm.querySelector('.top span').textContent='פרומפט, מעתיקים ומדביקים בכלי ה-AI';
   pm.querySelector('h2').textContent=it.title; pm.querySelector('.d').textContent=it.desc;
   pm.querySelector('.colsrow').innerHTML='<b>עמודות בגיליון:</b>'+it.cols.map(function(c){return '<span>'+esc(c)+'</span>'}).join('');
   pm.querySelector('pre').textContent=buildPrompt(it,'');
@@ -668,6 +695,7 @@ function openIdea(i){
 }
 canvas.addEventListener('click',function(e){
   var b=e.target.closest('.idea'); if(b){openIdea(+b.dataset.i);return}
+  var cc=e.target.closest('.codecard'); if(cc){openCode(+cc.dataset.code);return}
   if(e.target===pm||e.target.closest('.pmodal .x'))pm.hidden=true;
 });
 
