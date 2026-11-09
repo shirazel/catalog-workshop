@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>קטלוג חי, קובץ גיבוי</title>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#0181C9;--deep:#0B4F7C;--yellow:#E5E633;--teal:#6BE3D1;--soft:#E6FAF6;--orange:#FA7548;--ink:#303030;--body:#4A4A4A;--muted:#6B6B6B;--line:#DDE7E8;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Assistant','Heebo',sans-serif;color:var(--body);background:#fff;direction:rtl}
+header{background:var(--teal);padding:36px 20px 28px}
+.wrap{max-width:1150px;margin:0 auto}
+h1{margin:0 0 6px;color:var(--ink);font-size:clamp(30px,4.5vw,46px);font-weight:800}
+.sub{margin:0;color:var(--ink);font-size:18px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+.tools input{flex:1 1 260px;font:inherit;font-size:17px;padding:11px 14px;border:0;border-radius:8px}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filters button{font:inherit;font-weight:700;font-size:15px;border:2px solid #fff;background:#fff;color:var(--deep);border-radius:999px;padding:6px 16px;cursor:pointer}
+.filters button.on{background:var(--deep);border-color:var(--deep);color:#fff}
+main{padding:30px 20px 50px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.card{background:#fff;border-radius:var(--r);box-shadow:0 2px 10px rgba(48,48,48,.10);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s;animation:pop .4s both}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(48,48,48,.16)}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.img{aspect-ratio:16/10;background:var(--soft) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:800;color:var(--deep)}
+.card .in{padding:16px 18px 18px}
+.card h3{margin:0 0 4px;color:var(--ink);font-size:21px}
+.card p{margin:0;font-size:16px;line-height:1.55}
+.tag{display:inline-block;background:var(--soft);color:var(--deep);font-weight:700;font-size:13px;padding:2px 10px;border-radius:999px;margin-bottom:8px}
+.msg{background:var(--soft);border-right:5px solid var(--blue);border-radius:8px;padding:18px 22px;font-size:18px}
+.setup{max-width:720px;margin:40px auto;padding:0 20px}
+.setup input{width:100%;font:inherit;font-size:17px;padding:12px 14px;border:2px solid var(--line);border-radius:8px;margin:8px 0 12px}
+.btn{font:800 18px/1 'Assistant',sans-serif;background:var(--orange);color:var(--ink);border:0;border-radius:8px;padding:14px 28px;cursor:pointer;text-decoration:none;display:inline-block}
+.ghost{font:700 15px 'Assistant',sans-serif;background:transparent;color:var(--deep);border:2px solid var(--deep);border-radius:8px;padding:6px 14px;cursor:pointer}
+dialog{border:0;border-radius:var(--r);padding:0;max-width:640px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(11,79,124,.55)}
+dialog .img{aspect-ratio:16/8}
+dialog .in{padding:22px 26px 26px}
+dialog h2{margin:0 0 8px;color:var(--ink);font-size:28px}
+dialog .meta{color:var(--muted);font-size:15px;margin-bottom:10px}
+dialog .x{position:absolute;top:10px;left:10px;width:38px;height:38px;border-radius:50%;border:0;background:#fff;font-size:22px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+footer{text-align:center;font-size:13px;color:var(--muted);padding:20px}
+</style>
+</head>
+<body>
+<!--
+  קובץ גיבוי לסדנה. מי שנתקעה בשלב הבנייה פותחת את הקובץ בכרום,
+  מדביקה את הקישור לגיליון שלה, וממשיכה עם כולם לבקשות השינוי.
+  הקובץ קורא את הגיליון בלי סקריפט: כתובת gviz של גוגל שיטס בשיטת JSONP.
+  העמודות לפי גיליון התבנית: שם, תיאור קצר, תיאור מלא, קטגוריה, קהל יעד, תמונה, קישור, קישור הרשמה, מוצג
+-->
+<div id="app"></div>
+<dialog id="dlg"></dialog>
+<footer>© שירה רוט זליקוביץ · lomdot.org</footer>
+<script>
+var SHEET_URL = '';            // אפשר להדביק כאן את הקישור לגיליון, ואז הדף לא ישאל
+var TITLE = 'קטלוג הפעילויות שלנו';
+var FILTER_COL = 'קטגוריה';
+
+var KEY='lomdot-catalog-sheet';
+function getSheet(){ if(SHEET_URL) return SHEET_URL; try{return localStorage.getItem(KEY)||''}catch(e){return ''} }
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+function sheetId(url){var m=String(url).match(/\/d\/([a-zA-Z0-9_-]{20,})/);return m?m[1]:null}
+function sheetGid(url){var m=String(url).match(/[#&?]gid=(\d+)/);return m?m[1]:'0'}
+
+// קריאת הגיליון: מוסיפים תגית script, וגוגל קוראת לפונקציה שלנו עם הנתונים
+function readSheet(url){
+  return new Promise(function(resolve,reject){
+    var id=sheetId(url); if(!id){reject('קישור לא תקין');return}
+    var cb='gv'+Date.now(), s=document.createElement('script'), done=false;
+    var t=setTimeout(function(){if(!done){cleanup();reject('לא הצלחנו לקרוא את הגיליון')}},12000);
+    function cleanup(){done=true;clearTimeout(t);delete window[cb];s.remove()}
+    window[cb]=function(res){cleanup();
+      if(!res||res.status==='error'){reject('לא הצלחנו לקרוא את הגיליון');return}
+      var cols=res.table.cols.map(function(c){return (c.label||'').trim()});
+      var rows=res.table.rows.map(function(r){var o={};(r.c||[]).forEach(function(cell,i){o[cols[i]]=cell?(cell.f!=null?cell.f:cell.v):''});return o});
+      resolve(rows)};
+    s.onerror=function(){cleanup();reject('לא הצלחנו לקרוא את הגיליון')};
+    s.src='https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?headers=1&gid='+sheetGid(url)+'&tqx=responseHandler:'+cb+'&_='+Date.now();
+    document.head.appendChild(s);
+  });
+}
+
+// קישור דרייב רגיל הופך לכתובת שמוצגת כתמונה
+function imgUrl(u){
+  u=String(u||'').trim(); if(!u) return '';
+  var m=u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([a-zA-Z0-9_-]+)/);
+  return m?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w1000':u;
+}
+function pick(o,name){return o[name]!=null?String(o[name]).trim():''}
+
+var all=[], active='הכול', query='';
+
+function setup(err){
+  document.getElementById('app').innerHTML=
+   '<header><div class="wrap"><h1>'+esc(TITLE)+'</h1><p class="sub">קטלוג חי מגיליון גוגל</p></div></header>'+
+   '<div class="setup">'+(err?'<p class="msg">'+esc(err)+'. בדקו שהגיליון משותף: שיתוף, כל מי שיש לו את הקישור, צופה.</p>':'')+
+   '<p><b>מדביקים את הקישור לגיליון שלכם:</b></p><input id="u" placeholder="https://docs.google.com/spreadsheets/d/..." value="'+esc(getSheet())+'">'+
+   '<button class="btn" id="go">להצגת הקטלוג</button></div>';
+  document.getElementById('go').onclick=function(){var v=document.getElementById('u').value.trim();try{localStorage.setItem(KEY,v)}catch(e){}SHEET_URL=v;load()};
+}
+
+function render(){
+  var cats=['הכול'];
+  all.forEach(function(r){var c=pick(r,FILTER_COL);if(c&&cats.indexOf(c)<0)cats.push(c)});
+  var list=all.filter(function(r){
+    var okCat=active==='הכול'||pick(r,FILTER_COL)===active;
+    var txt=(pick(r,'שם')+' '+pick(r,'תיאור קצר')+' '+pick(r,'תיאור מלא')).toLowerCase();
+    return okCat&&(!query||txt.indexOf(query.toLowerCase())>=0)});
+  var app=document.getElementById('app');
+  if(!app.querySelector('header .tools')){
+    app.innerHTML='<header><div class="wrap"><h1>'+esc(TITLE)+'</h1><p class="sub" id="cnt"></p>'+
+     '<div class="tools"><input id="q" placeholder="חיפוש"><div class="filters" id="f"></div></div></div></header><main><div class="wrap"><div class="grid" id="g"></div></div></main>';
+    document.getElementById('q').oninput=function(e){query=e.target.value;render()};
+  }
+  document.getElementById('cnt').textContent=list.length+' פריטים';
+  document.getElementById('f').innerHTML=cats.map(function(c){return '<button class="'+(c===active?'on':'')+'">'+esc(c)+'</button>'}).join('');
+  [].forEach.call(document.querySelectorAll('#f button'),function(b){b.onclick=function(){active=b.textContent;render()}});
+  document.getElementById('g').innerHTML=list.length?list.map(function(r,i){
+    var im=imgUrl(pick(r,'תמונה')), nm=pick(r,'שם');
+    return '<div class="card" data-i="'+all.indexOf(r)+'" style="animation-delay:'+(i*40)+'ms"><div class="img" style="'+(im?'background-image:url(\''+esc(im)+'\')':'')+'">'+(im?'':esc(nm.charAt(0)))+'</div>'+
+      '<div class="in">'+(pick(r,FILTER_COL)?'<span class="tag">'+esc(pick(r,FILTER_COL))+'</span>':'')+'<h3>'+esc(nm)+'</h3><p>'+esc(pick(r,'תיאור קצר'))+'</p></div></div>'}).join('')
+    :'<p class="msg">אין פריטים להצגה.</p>';
+  [].forEach.call(document.querySelectorAll('.card'),function(c){c.onclick=function(){open(all[c.dataset.i])}});
+}
+
+function open(r){
+  var d=document.getElementById('dlg'), im=imgUrl(pick(r,'תמונה')), reg=pick(r,'קישור הרשמה'), link=pick(r,'קישור');
+  d.innerHTML='<button class="x" aria-label="סגירה">×</button><div class="img" style="'+(im?'background-image:url(\''+esc(im)+'\')':'')+'">'+(im?'':esc(pick(r,'שם').charAt(0)))+'</div>'+
+    '<div class="in"><h2>'+esc(pick(r,'שם'))+'</h2><div class="meta">'+esc([pick(r,FILTER_COL),pick(r,'קהל יעד')].filter(Boolean).join(' · '))+'</div>'+
+    '<p>'+esc(pick(r,'תיאור מלא')||pick(r,'תיאור קצר'))+'</p><div class="row">'+
+    (reg?'<a class="btn" href="'+esc(reg)+'" target="_blank" rel="noopener">להרשמה</a>':'')+
+    (link?'<a class="ghost" href="'+esc(link)+'" target="_blank" rel="noopener">לפרטים נוספים</a>':'')+'</div></div>';
+  d.querySelector('.x').onclick=function(){d.close()};
+  d.onclick=function(e){if(e.target===d)d.close()};
+  d.showModal();
+}
+
+function load(){
+  var u=getSheet(); if(!u){setup();return}
+  readSheet(u).then(function(rows){
+    all=rows.filter(function(r){return pick(r,'שם')&&pick(r,'מוצג')!=='לא'});
+    render();
+  },function(err){setup(err)});
+}
+load();
+</script>
+</body>
+</html>
