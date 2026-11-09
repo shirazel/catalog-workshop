@@ -238,6 +238,11 @@ h3{font-size:40px;font-weight:700;color:var(--lm-blue-deep)}
 .pmodal .colsrow[hidden],.pmodal .tipline[hidden]{display:none}
 .pmodal .prompt pre.code{direction:ltr;text-align:left;font-family:Consolas,monospace;font-size:26px;line-height:1.5;color:#1d3d52}
 .cta.ghost{background:#fff;color:var(--lm-blue-deep);box-shadow:inset 0 0 0 3px var(--lm-blue-deep)}
+.linkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:10px}
+.lgroup{background:#fff;border-radius:18px;box-shadow:var(--shadow);padding:26px 26px 22px;display:flex;flex-direction:column;gap:12px}
+.lgroup h4{margin:0 0 4px;font-size:30px;font-weight:800;color:var(--lm-blue-deep)}
+.lgroup a{display:block;text-decoration:none;font-weight:700;font-size:27px;color:var(--lm-ink);background:var(--lm-teal-soft);border-radius:10px;padding:12px 16px;transition:transform .15s,box-shadow .15s}
+.lgroup a:hover{transform:translateY(-2px);box-shadow:0 0 0 3px var(--lm-teal)}
 </style>
 </head>
 <body>
@@ -253,6 +258,7 @@ h3{font-size:40px;font-weight:700;color:var(--lm-blue-deep)}
   <button id="tocBtn">תוכן העניינים</button>
   <button id="menuBtn">שקפים</button>
   <button id="packBtn">חבילת פרומפטים</button>
+  <button id="linksBtn">קישורים</button>
   <button id="full">מסך מלא</button>
 </div>
 <div class="menu" id="menu" hidden></div>
@@ -605,7 +611,15 @@ var SLIDES = [
  {kind:'end', hint:'סיום'},
 
  {kind:'ideas', cls:'soft', hint:'חבילת הפרומפטים', eyebrow:'חבילת הפרומפטים', title:'אותו גיליון, שתים עשרה דרכים',
-  lede:'לוחצים על ריבוע, ונפתח הפרומפט המוכן להעתקה.'}
+  lede:'לוחצים על ריבוע, ונפתח הפרומפט המוכן להעתקה.'},
+
+ {kind:'links', cls:'soft', hint:'כל הקישורים', eyebrow:'למנחה', title:'כל הקישורים לסדנה',
+  groups:[
+   ['פתיחה', [['טופס ההיכרות','https://docs.google.com/forms/d/e/1FAIpQLScgVant014806ZudhkEARDsM3pCyE5bUcDOfAQ30t20OurtnA/viewform'],['קיר ההיכרות','כלים/קיר-היכרות.html'],['גיליון התשובות','https://docs.google.com/spreadsheets/d/1DFhU2YZwURifdWEuPj4uEb-8L2ViUnSsEsdNHYNyK28/edit'],['ספרון ההיכרות','כלים/ספר-היכרות.html']]],
+   ['הגיליונות', [['הגיליון לדוגמה','https://docs.google.com/spreadsheets/d/1947zg_vVB_2RYHRnokZmGFPxEGWKIT8mVMBCNeLbXQc/edit'],['קישור העותק, לצ\'אט','https://docs.google.com/spreadsheets/d/1947zg_vVB_2RYHRnokZmGFPxEGWKIT8mVMBCNeLbXQc/copy'],['גיליון הקישורים','https://docs.google.com/spreadsheets/d/1timoPjk6UOEfiN4KgoWuThuqb989z8sEpym-i0A2wto/edit']]],
+   ['התוצרים', [['קטלוג חי','כלים/קטלוג-דוגמה.html'],['דף קישורים','כלים/דף-קישורים-דוגמה.html'],['קובץ הגיבוי','כלים/קטלוג-גיבוי.html']]],
+   ['חומרים ופרסום', [['חבילת הפרומפטים','חבילת-פרומפטים.html'],['דף 5 הצעדים','5-צעדים-סדנה-1.html'],['Netlify Drop','https://app.netlify.com/drop']]]
+  ]}
 ];
 
 /* ===== מכאן והלאה: מנוע המצגת ===== */
@@ -667,6 +681,9 @@ var R = {
  moment:function(s){return '<h1>'+s.title+'</h1><div class="beats">'+s.beats.map(function(b){return '<div><b>'+b[0]+'</b>'+b[1]+'</div>'}).join('')+'</div>'},
  trouble:function(s){return head(s)+'<table class="trouble"><tr><th>מה רואים</th><th>הסיבה</th><th>מה עושים</th></tr>'+
    s.rows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>'}).join('')+'</table><p class="lede" style="font-size:30px">'+s.foot+'</p>'},
+ links:function(s){return head(s)+'<div class="linkgrid">'+s.groups.map(function(g){
+   return '<div class="lgroup"><h4>'+g[0]+'</h4>'+g[1].map(function(l){
+     return '<a href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+'</a>'}).join('')+'</div>'}).join('')+'</div>'},
  ideas:function(s){return head(s)+lede(s)+'<div class="ideas">'+IDEAS.map(function(it,i){
    return '<button class="idea" data-i="'+i+'"><b>'+String(i+1).padStart(2,'0')+'</b><span>'+esc(it.title)+'</span></button>'}).join('')+'</div>'},
  wear:function(s){return head(s)+lede(s)+'<div class="wear">'+
@@ -747,6 +764,8 @@ document.addEventListener('click',function(e){var b=e.target.closest('.qrcopy');
   var done=function(){b.textContent='הועתק, אפשר להדביק בצ׳אט';b.classList.add('done')};
   if(navigator.clipboard){navigator.clipboard.writeText(FORM_LINK).then(done,function(){prompt('העתיקו את הקישור:',FORM_LINK)})}else{prompt('העתיקו את הקישור:',FORM_LINK)}});
 var PACK=SLIDES.findIndex(function(x){return x.kind==='ideas'});
+var LINKS=SLIDES.findIndex(function(x){return x.kind==='links'});
+document.getElementById('linksBtn').onclick=function(){show(LINKS)};   // קפיצה לשקף כל הקישורים
 document.getElementById('packBtn').onclick=function(){show(PACK)};   // קפיצה לשקף חבילת הפרומפטים, בסוף המצגת
 document.getElementById('tocBtn').onclick=function(){show(TOC)};   // חזרה לשקף "מה נעשה הערב"
 document.addEventListener('keydown',function(e){
