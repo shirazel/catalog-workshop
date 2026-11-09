@@ -258,7 +258,6 @@ h3{font-size:40px;font-weight:700;color:var(--lm-blue-deep)}
   <button id="tocBtn">תוכן העניינים</button>
   <button id="menuBtn">שקפים</button>
   <button id="packBtn">חבילת פרומפטים</button>
-  <button id="linksBtn">קישורים</button>
   <button id="full">מסך מלא</button>
 </div>
 <div class="menu" id="menu" hidden></div>
@@ -764,8 +763,6 @@ document.addEventListener('click',function(e){var b=e.target.closest('.qrcopy');
   var done=function(){b.textContent='הועתק, אפשר להדביק בצ׳אט';b.classList.add('done')};
   if(navigator.clipboard){navigator.clipboard.writeText(FORM_LINK).then(done,function(){prompt('העתיקו את הקישור:',FORM_LINK)})}else{prompt('העתיקו את הקישור:',FORM_LINK)}});
 var PACK=SLIDES.findIndex(function(x){return x.kind==='ideas'});
-var LINKS=SLIDES.findIndex(function(x){return x.kind==='links'});
-document.getElementById('linksBtn').onclick=function(){show(LINKS)};   // קפיצה לשקף כל הקישורים
 document.getElementById('packBtn').onclick=function(){show(PACK)};   // קפיצה לשקף חבילת הפרומפטים, בסוף המצגת
 document.getElementById('tocBtn').onclick=function(){show(TOC)};   // חזרה לשקף "מה נעשה הערב"
 document.addEventListener('keydown',function(e){
