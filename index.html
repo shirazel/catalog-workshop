@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>סדנאות נובמבר, לומדות</title>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lm-blue:#0181C9; --lm-blue-deep:#0B4F7C; --lm-yellow:#E5E633; --lm-teal:#6BE3D1; --lm-teal-soft:#E6FAF6;
+  --lm-orange:#FA7548; --lm-ink:#303030; --lm-body:#4A4A4A; --lm-muted:#6B6B6B; --lm-border:#DDE7E8;
+  --lm-font:'Assistant','Heebo',sans-serif; --shadow:0 2px 10px rgba(48,48,48,.10); --shadow-hover:0 8px 24px rgba(48,48,48,.16);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--lm-font);font-size:18px;line-height:1.7;color:var(--lm-body);background:#fff}
+h1,h2{color:var(--lm-ink);font-weight:800;line-height:1.25;margin:0 0 .4em}
+h1{font-size:clamp(34px,5vw,52px)} h2{font-size:26px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px}
+.mark{background:linear-gradient(transparent 58%,var(--lm-yellow) 58%);padding:0 4px}
+header{padding:26px 0 30px}
+header img{height:64px;display:block;margin-bottom:22px}
+.lede{font-size:20px;max-width:60ch;margin:0}
+.band{background:var(--lm-teal);padding:44px 0}
+.ws{display:grid;gap:20px}
+.card{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:24px}
+.card .when{display:inline-block;background:var(--lm-teal-soft);color:var(--lm-blue-deep);font-weight:700;font-size:15px;padding:3px 14px;border-radius:999px;margin-bottom:8px}
+.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.links a{text-decoration:none;font-weight:800;color:var(--lm-blue-deep);border:2px solid var(--lm-blue-deep);border-radius:10px;padding:9px 20px;transition:transform .15s,box-shadow .15s}
+.links a:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+.links a.main{background:var(--lm-orange);border-color:var(--lm-orange);color:var(--lm-ink)}
+.soon{color:var(--lm-muted);margin:6px 0 0}
+footer{text-align:center;font-size:14px;color:var(--lm-muted);padding:28px 16px 36px;line-height:1.9}
+footer a{color:inherit} footer .sep{margin:0 6px;opacity:.5}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <img src="lomdot-logo.png" alt="לומדות, סדנאות בבינה מלאכותית">
+  <h1>מגיליון <span class="mark">לקטלוג חי</span> עם AI</h1>
+  <p class="lede">כאן נמצאים החומרים של סדנאות נובמבר: המצגות, חבילות הפרומפטים ודפי הצעדים. שמרו את הקישור וחזרו אליו מתי שתרצו.</p>
+</div></header>
+
+<section class="band"><div class="wrap ws">
+  <div class="card">
+    <span class="when">סדנה 1 · יום שני 9.11</span>
+    <h2>קטלוג חי מתוך גיליון</h2>
+    <div class="links">
+      <a class="main" href="workshop-1/prompts.html">חבילת הפרומפטים</a>
+      <a href="workshop-1/steps.html">5 הצעדים</a>
+      <a href="workshop-1/deck.html">המצגת</a>
+    </div>
+  </div>
+  <div class="card">
+    <span class="when">סדנה 2 · יום שני 16.11</span>
+    <h2>טפסים, הרשמה ואוטומציות</h2>
+    <p class="soon">החומרים יעלו כאן אחרי הסדנה.</p>
+  </div>
+  <div class="card">
+    <span class="when">סדנה 3 · יום שני 23.11</span>
+    <h2>פוסטר מאויר, משאלון לפרומפט ואלבום דיגיטלי</h2>
+    <p class="soon">החומרים יעלו כאן אחרי הסדנה.</p>
+  </div>
+</div></section>
+
+<footer>
+  <span>© שירה רוט זליקוביץ · הוראה יצירתית עם AI</span><br>
+  <a href="https://wa.me/972523930628" target="_blank" rel="noopener">ווטסאפ</a><span class="sep">·</span><a href="https://www.lomdot.org/" target="_blank" rel="noopener">האתר שלי</a><span class="sep">·</span><a href="https://www.lomdot.org/" target="_blank" rel="noopener">להזמנת סדנאות בינה מלאכותית</a>
+</footer>
+</body>
+</html>

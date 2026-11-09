@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>קיר ההיכרות, חי</title>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--blue:#0181C9;--deep:#0B4F7C;--yellow:#E5E633;--teal:#6BE3D1;--soft:#E6FAF6;--orange:#FA7548;--ink:#303030;--body:#4A4A4A;--muted:#6B6B6B;--line:#DDE7E8}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:'Assistant','Heebo',sans-serif;color:var(--body);background:var(--teal);direction:rtl;overflow:hidden}
+.top{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:26px 40px 10px}
+h1{margin:0;color:var(--ink);font-size:clamp(34px,4vw,56px);font-weight:800;line-height:1.1}
+h1 .mark{background:linear-gradient(transparent 58%,var(--yellow) 58%);padding:0 6px}
+.count{font-size:22px;font-weight:700;color:var(--deep);margin-top:4px}
+.qr{background:#fff;border-radius:14px;padding:12px 12px 6px;text-align:center;box-shadow:0 2px 10px rgba(48,48,48,.12);flex:0 0 auto}
+.qr #qrbox img,.qr #qrbox canvas{width:150px;height:150px}
+.qr span{display:block;font-weight:800;color:var(--ink);font-size:16px;margin-top:4px}
+.wall{position:absolute;inset:150px 0 0 0;overflow-y:auto;padding:16px 40px 40px}
+.grid{columns:4 280px;column-gap:20px}
+.card{break-inside:avoid;background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(48,48,48,.10);padding:20px 22px;margin:0 0 20px;display:block}
+.card.new{animation:in .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes in{0%{opacity:0;transform:translateY(24px) scale(.96)}60%{opacity:1}100%{transform:none}}
+.card .hd{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.av{flex:0 0 64px;height:64px;overflow:hidden;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;color:#fff;background:var(--deep)}
+.card h3{margin:0;color:var(--ink);font-size:24px;line-height:1.15}
+.card .role{color:var(--deep);font-weight:700;font-size:16px}
+.card p{margin:8px 0 0;font-size:17px;line-height:1.5}
+.card p b{color:var(--ink)}
+.av img{width:100%;height:100%;object-fit:cover}
+.pbtn{font:800 15px/1 'Assistant',sans-serif;background:#fff;color:var(--deep);border:2px solid var(--deep);border-radius:8px;padding:8px 14px;cursor:pointer;margin-top:12px}
+.pdlg{position:absolute;inset:0;background:rgba(11,79,124,.6);display:flex;align-items:center;justify-content:center;z-index:6}
+.pdlg .box{background:#fff;border-radius:14px;padding:26px 30px;max-width:760px;width:calc(100% - 40px)}
+.pdlg h2{margin:0 0 6px;color:var(--ink);font-size:30px}
+.pdlg .from{color:var(--deep);font-weight:700;margin-bottom:12px}
+.pdlg pre{white-space:pre-wrap;font:600 21px/1.6 'Assistant',sans-serif;color:var(--ink);background:var(--soft);border:2px solid var(--teal);border-radius:10px;padding:16px 18px;margin:0}
+.pdlg .row{display:flex;gap:12px;margin-top:16px}
+.pdlg .ghost{font:800 18px/1 'Assistant',sans-serif;background:#fff;color:var(--deep);border:2px solid var(--deep);border-radius:8px;padding:12px 24px;cursor:pointer;margin-top:16px}
+.card .build{background:var(--soft);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:16px}
+.setup{position:absolute;inset:0;background:rgba(11,79,124,.6);display:flex;align-items:center;justify-content:center;z-index:5}
+[hidden]{display:none!important}
+.setup .box{background:#fff;border-radius:14px;padding:28px 30px;max-width:640px;width:calc(100% - 40px)}
+.setup h2{margin:0 0 10px;color:var(--ink)}
+.setup label{display:block;font-weight:700;color:var(--ink);margin-top:12px}
+.setup input{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:2px solid var(--line);border-radius:8px;margin-top:4px}
+.setup small{color:var(--muted)}
+.btn{font:800 18px/1 'Assistant',sans-serif;background:var(--orange);color:var(--ink);border:0;border-radius:8px;padding:14px 28px;cursor:pointer;margin-top:16px}
+.err{color:#C2410C;font-weight:700}
+.gear{position:fixed;bottom:12px;left:12px;font:700 13px 'Assistant',sans-serif;background:rgba(255,255,255,.7);border:0;border-radius:8px;padding:6px 12px;cursor:pointer;color:var(--deep)}
+.empty{font-size:26px;color:var(--ink);text-align:center;margin-top:60px}
+</style>
+</head>
+<body>
+<!--
+  קיר ההיכרות לפתיחת סדנה 1.
+  טופס גוגל (בלי איסוף מיילים) עם השאלות לפי הסדר:
+  1. שם פרטי  2. מה אני עושה  3. מאיפה אני  4. משהו שלא יודעים עליי  5. מה הייתי רוצה לבנות מגיליון
+  6. תמונה שלי (העלאת קובץ, לא חובה)
+  בגיליון התשובות, בתא הראשון של העמודה שאחרי התמונה, מדביקים את נוסחת "פרומפט לתמונה" (שקף 22 במצגת).
+  את גיליון התשובות משתפים לצפייה, וגם את תיקיית הקבצים שהטופס יצר בדרייב.
+  מדביקים כאן את הקישור לגיליון ואת הקישור לטופס, ומקרינים.
+  הקיר קורא את הגיליון כל 10 שניות, וכרטיס חדש נכנס באנימציה.
+-->
+<div class="top">
+  <div>
+    <h1>מי איתנו <span class="mark">הערב</span></h1>
+    <div class="count" id="count">מחכים לראשונים...</div>
+  </div>
+  <div class="qr" id="qrwrap" hidden><div id="qrbox"></div><span>סורקים וממלאים</span></div>
+</div>
+<div class="wall"><div class="grid" id="grid"></div></div>
+<button class="gear" id="gear">הגדרות</button>
+
+<div class="pdlg" id="pdlg" hidden>
+  <div class="box">
+    <h2 id="pname"></h2>
+    <div class="from">הפרומפט הזה נכתב בגיליון, מתוך התשובות בשורה</div>
+    <pre id="ptext"></pre>
+    <div class="row"><button class="btn" id="pcopy">העתקה</button><button class="ghost" id="pclose">סגירה</button></div>
+  </div>
+</div>
+
+<div class="setup" id="setup" hidden>
+  <div class="box">
+    <h2>הגדרת הקיר</h2>
+    <label>הקישור לגיליון התשובות של הטופס</label>
+    <input id="s" placeholder="https://docs.google.com/spreadsheets/d/...">
+    <small>הגיליון משותף לצפייה לכל מי שיש לו את הקישור.</small>
+    <label>הקישור לטופס, בשביל קוד ה-QR (לא חובה)</label>
+    <input id="f" placeholder="https://forms.gle/...">
+    <div class="err" id="err"></div>
+    <button class="btn" id="go">להצגת הקיר</button>
+  </div>
+</div>
+
+<script>
+var SHEET_URL = '';   // אפשר להדביק כאן מראש
+var FORM_URL  = '';
+var EVERY = 10000;
+
+var store={get:function(k){try{return localStorage.getItem(k)||''}catch(e){return ''}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+SHEET_URL=SHEET_URL||store.get('lomdot-wall-sheet'); FORM_URL=FORM_URL||store.get('lomdot-wall-form');
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function sheetId(u){var m=String(u).match(/\/d\/([a-zA-Z0-9_-]{20,})/);return m?m[1]:null}
+function sheetGid(u){var m=String(u).match(/[#&?]gid=(\d+)/);return m?m[1]:'0'}
+function readSheet(url){
+  return new Promise(function(resolve,reject){
+    var id=sheetId(url); if(!id){reject('הקישור לגיליון לא תקין');return}
+    var cb='gv'+Date.now(), s=document.createElement('script'), done=false;
+    var t=setTimeout(function(){if(!done){cleanup();reject('לא הצלחנו לקרוא את הגיליון. בדקו שהוא משותף לצפייה.')}},12000);
+    function cleanup(){done=true;clearTimeout(t);delete window[cb];s.remove()}
+    window[cb]=function(res){cleanup();
+      if(!res||res.status==='error'){reject('לא הצלחנו לקרוא את הגיליון. בדקו שהוא משותף לצפייה.');return}
+      resolve(res.table.rows.map(function(r){return (r.c||[]).map(function(c){return c?(c.f!=null?c.f:c.v):''})}))};
+    s.onerror=function(){cleanup();reject('לא הצלחנו לקרוא את הגיליון.')};
+    s.src='https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?headers=1&gid='+sheetGid(url)+'&tqx=responseHandler:'+cb+'&_='+Date.now();
+    document.head.appendChild(s);
+  });
+}
+
+var COLORS=['#0B4F7C','#0181C9','#C2410C','#2F7D6D','#6B4FA0','#9A5B00'];
+var seen={}, timer=null, first=true, PROMPTS=[];
+
+// קישור מהטופס (drive.google.com/open?id=...) הופך לכתובת שמוצגת כתמונה
+function driveImg(u){u=String(u||'').split(',')[0].trim();var m=u.match(/[?&]id=([\w-]{20,})/)||u.match(/\/d\/([\w-]{20,})/);
+  return m?'https://drive.google.com/thumbnail?id='+m[1]+'&sz=w400':(/^https?:/.test(u)?u:'')}
+
+function card(r,isNew){
+  // r[0] חותמת זמן, ואחריה השאלות לפי הסדר
+  var name=String(r[1]||'').trim(); if(!name) return '';
+  var col=COLORS[name.charCodeAt(0)%COLORS.length], img=driveImg(r[6]);
+  // r[6] התמונה מהטופס, r[7] הפרומפט שהנוסחה בגיליון בנתה
+  var pi=-1; if(String(r[7]||'').trim()){PROMPTS.push({name:name,text:r[7]});pi=PROMPTS.length-1}
+  var av=img?'<img src="'+esc(img)+'" alt="" onerror="this.remove()">':'';
+  return '<div class="card'+(isNew?' new':'')+'"><div class="hd"><div class="av" style="background:'+col+'">'+av+esc(img?'':name.charAt(0))+'</div>'+
+    '<div><h3>'+esc(name)+'</h3><div class="role">'+esc([r[2],r[3]].filter(Boolean).join(' · '))+'</div></div></div>'+
+    (r[4]?'<p><b>משהו שלא יודעים עליי:</b> '+esc(r[4])+'</p>':'')+
+    (r[5]?'<div class="build"><b>הייתי רוצה לבנות:</b> '+esc(r[5])+'</div>':'')+
+    (pi>=0?'<button class="pbtn" data-p="'+pi+'">פרומפט לתמונה</button>':'')+'</div>';
+}
+
+function tick(){
+  readSheet(SHEET_URL).then(function(rows){
+    rows=rows.filter(function(r){return String(r[1]||'').trim()});
+    var html='', fresh=0; PROMPTS=[];
+    rows.slice().reverse().forEach(function(r){
+      var k=r.join('|'); var isNew=!seen[k]&&!first; if(!seen[k])fresh++; seen[k]=1; html+=card(r,isNew);
+    });
+    if(fresh||first) document.getElementById('grid').innerHTML=html||'<div class="empty">הקיר מחכה לכם. סורקים וממלאים.</div>';
+    document.getElementById('count').textContent=rows.length?(rows.length===1?'משתתף אחד על הקיר':rows.length+' משתתפים על הקיר'):'מחכים לראשונים...';
+    first=false;
+  },function(e){document.getElementById('count').textContent=e});
+}
+
+function start(){
+  document.getElementById('setup').hidden=true;
+  if(FORM_URL&&window.QRCode){document.getElementById('qrbox').innerHTML='';new QRCode(document.getElementById('qrbox'),{text:FORM_URL,width:300,height:300,colorDark:'#303030',colorLight:'#ffffff'});document.getElementById('qrwrap').hidden=false}
+  clearInterval(timer); seen={}; first=true; tick(); timer=setInterval(tick,EVERY);
+}
+function openSetup(){document.getElementById('s').value=SHEET_URL;document.getElementById('f').value=FORM_URL;document.getElementById('setup').hidden=false}
+document.getElementById('go').onclick=function(){
+  var s=document.getElementById('s').value.trim(), f=document.getElementById('f').value.trim();
+  if(!sheetId(s)){document.getElementById('err').textContent='צריך להדביק קישור לגיליון גוגל';return}
+  SHEET_URL=s;FORM_URL=f;store.set('lomdot-wall-sheet',s);store.set('lomdot-wall-form',f);start();
+};
+document.getElementById('gear').onclick=openSetup;
+document.getElementById('grid').onclick=function(e){var b=e.target.closest('.pbtn');if(!b)return;var p=PROMPTS[+b.dataset.p];
+  document.getElementById('pname').textContent='פרומפט לתמונה: '+p.name;document.getElementById('ptext').textContent=p.text;
+  document.getElementById('pcopy').textContent='העתקה';document.getElementById('pdlg').hidden=false};
+document.getElementById('pcopy').onclick=function(){var t=document.getElementById('ptext').textContent,b=this;
+  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent='הועתק'},function(){b.textContent='סמנו והעתיקו ידנית'})};
+document.getElementById('pclose').onclick=function(){document.getElementById('pdlg').hidden=true};
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('pdlg').hidden=true});
+if(SHEET_URL) start(); else openSetup();
+</script>
+</body>
+</html>
