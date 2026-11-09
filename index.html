@@ -250,7 +250,7 @@ h3{font-size:40px;font-weight:700;color:var(--lm-blue-deep)}
   <span class="count" id="count"></span>
   <span class="hint" id="hint"></span>
   <span class="sp"></span>
-  <button id="tocBtn">תוכן העניינים</button>
+  <button id="packBtn">חבילת הפרומפטים</button><button id="tocBtn">תוכן העניינים</button>
   <button id="menuBtn">שקפים</button>
   <button id="full">מסך מלא</button>
 </div>
@@ -536,9 +536,6 @@ var SLIDES = [
    {k:'סינון', h:'"תוסיף סינון לפי קהל יעד"', p:'כפתורים מעל הכרטיסים.'},
    {k:'כשמשהו נשבר', h:'"תחזיר את הגרסה הקודמת"', p:'ושנה רק את מה שביקשתי.'}]},
 
- {kind:'ideas', cls:'soft', hint:'חבילת הפרומפטים', eyebrow:'חבילת הפרומפטים', title:'אותו גיליון, שתים עשרה דרכים',
-  lede:'לוחצים על ריבוע, ונפתח הפרומפט המוכן להעתקה.'},
-
  {kind:'cards', hint:'תמונות', num:'08', eyebrow:'שלב שמיני', title:'מוסיפים תמונות',
   lede:'בעמודה "תמונה" מדביקים קישור לתמונה. לא מכניסים את התמונה עצמה לתא.',
   cols:2, items:[
@@ -591,7 +588,10 @@ var SLIDES = [
          'דף "5 צעדים" כדי לחזור על הכול לבד',
          'משימה קטנה: לבחור עוד רעיון מחבילת הפרומפטים ולבנות אותו']},
 
- {kind:'end', hint:'סיום'}
+ {kind:'end', hint:'סיום'},
+
+ {kind:'ideas', cls:'soft', hint:'חבילת הפרומפטים', eyebrow:'חבילת הפרומפטים', title:'אותו גיליון, שתים עשרה דרכים',
+  lede:'לוחצים על ריבוע, ונפתח הפרומפט המוכן להעתקה.'}
 ];
 
 /* ===== מכאן והלאה: מנוע המצגת ===== */
@@ -732,6 +732,8 @@ document.addEventListener('click',function(e){var b=e.target.closest('.qrcopy');
   // מעתיק את קישור הטופס כדי להדביק בצ'אט של הזום
   var done=function(){b.textContent='הועתק, אפשר להדביק בצ׳אט';b.classList.add('done')};
   if(navigator.clipboard){navigator.clipboard.writeText(FORM_LINK).then(done,function(){prompt('העתיקו את הקישור:',FORM_LINK)})}else{prompt('העתיקו את הקישור:',FORM_LINK)}});
+var PACK=SLIDES.findIndex(function(x){return x.kind==='ideas'});
+document.getElementById('packBtn').onclick=function(){show(PACK)};   // קפיצה לשקף חבילת הפרומפטים, בסוף המצגת
 document.getElementById('tocBtn').onclick=function(){show(TOC)};   // חזרה לשקף "מה נעשה הערב"
 document.addEventListener('keydown',function(e){
   if(e.key==='ArrowLeft'||e.key==='PageDown'||e.key===' '){e.preventDefault();show(cur+1)}
