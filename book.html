@@ -32,7 +32,7 @@
 
   /* ---------- עמודים ---------- */
   .page{background:var(--paper);overflow:hidden}
-  .page .inner{position:absolute;inset:0;padding:7% 8%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:
+  .page .inner{position:absolute;inset:0;padding:9% 10% 11%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:
       radial-gradient(ellipse at center,rgba(255,255,255,.35),transparent 70%),
       linear-gradient(90deg,rgba(0,0,0,.06),transparent 6%,transparent 94%,rgba(0,0,0,.06))}
 
@@ -51,17 +51,20 @@
   .credit a{color:inherit}
 
   /* עמוד משתתף */
-  .photo{width:62%;aspect-ratio:1;background:#fff;padding:3.5%;box-shadow:0 2px 6px rgba(59,36,22,.25);border:1px solid var(--paper-edge);flex-shrink:0}
-  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo{position:relative;width:52%;aspect-ratio:1;min-height:0;flex:0 0 auto;overflow:hidden;background:#fff;border:10px solid #fff;box-shadow:0 2px 8px rgba(59,36,22,.22);outline:1px solid var(--paper-edge)}
+  .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block}
   .photo b{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--tile,#b98a5e);font-family:"Suez One","Heebo",sans-serif;font-weight:400;font-size:clamp(3.4rem,8vw,6rem);color:#fff8ea;text-shadow:0 2px 0 rgba(0,0,0,.15)}
-  .person h2{font-family:"Suez One","Heebo",sans-serif;font-weight:400;font-size:clamp(1.7rem,3.2vw,2.6rem);margin:.45em 0 .05em;color:var(--ink)}
-  .person .who{font-family:"Heebo",sans-serif;font-weight:400;font-size:clamp(.95rem,1.5vw,1.15rem);color:var(--ink-soft);margin:0 0 .7em}
-  .person .cap{font-family:"Heebo",sans-serif;font-weight:400;font-size:clamp(1.05rem,1.7vw,1.3rem);line-height:1.45;color:var(--ink);margin:.35em 0 0;max-width:88%}
+  .person h2{font-family:"Suez One","Heebo",sans-serif;font-weight:400;font-size:clamp(1.4rem,2.6vw,2.1rem);line-height:1.15;margin:.5em 0 .1em;color:var(--ink)}
+  .person .who{font-family:"Heebo",sans-serif;font-weight:400;font-size:clamp(.85rem,1.3vw,1rem);line-height:1.35;color:var(--ink-soft);margin:0 0 .6em;max-width:90%}
+  .person .cap{font-family:"Heebo",sans-serif;font-weight:400;font-size:clamp(.9rem,1.45vw,1.1rem);line-height:1.4;color:var(--ink);margin:.3em 0 0;max-width:86%}
   .person .cap small{display:block;font-family:"Heebo",sans-serif;font-weight:700;font-size:.72em;color:#a07a3c;letter-spacing:.04em;margin-bottom:2px}
   .pnum{position:absolute;bottom:7%;left:0;right:0;text-align:center;font-family:"Bellefair","Heebo",sans-serif;font-size:.9rem;color:var(--ink-soft)}
   .person::before,.person::after{content:"";position:absolute;pointer-events:none;border:1px solid rgba(160,122,60,.45)}
   .person::before{inset:3.5%}
   .person::after{inset:4.6%;border-color:rgba(160,122,60,.25)}
+  .person.dense .photo{width:46%}
+  .person.dense h2{font-size:clamp(1.25rem,2.2vw,1.8rem)}
+  .person.dense .cap{font-size:clamp(.82rem,1.25vw,.98rem)}
   .ornament svg{width:40%;max-width:180px;opacity:.55}
 
   @media (max-width:760px){
@@ -126,8 +129,9 @@
     const img = driveImg(p.photo);
     const init = esc(p.name.charAt(0));
     const tile = ['#b98a5e','#8a9a6b','#6f8fa6','#c08457','#9b7aa0','#b5a04f'][(n - 1) % 6];   // צבע אחר לכל משתתף
+    const dense = (p.role + p.from + p.fact + p.build).length > 85 ? ' dense' : '';   // הרבה טקסט: תמונה וכתב קטנים יותר
     const who = [p.role, p.from].filter(Boolean).join(' · ');
-    return `<div class="page"><div class="inner person" style="--tile:${tile}">
+    return `<div class="page"><div class="inner person${dense}" style="--tile:${tile}">
       <div class="photo">${img ? `<img src="${esc(img)}" alt="${esc(p.name)}" onerror="this.outerHTML='<b>${init}</b>'">` : `<b>${init}</b>`}</div>
       <h2>${esc(p.name)}</h2>
       ${who ? `<p class="who">${esc(who)}</p>` : ''}
