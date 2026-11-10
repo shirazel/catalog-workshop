@@ -732,7 +732,7 @@ function fit(){var w=window.innerWidth,h=window.innerHeight-64;canvas.style.tran
 window.addEventListener('resize',fit); fit();
 
 var slides=[].slice.call(canvas.querySelectorAll('.slide')), cur=0;
-try{var sv=parseInt(localStorage.getItem('lomdot-s1-slide'),10);if(sv>=0&&sv<slides.length)cur=sv}catch(e){}
+// המצגת נפתחת תמיד בשקף הראשון (אלא אם יש מספר שקף בכתובת)
 var hs=parseInt(location.hash.slice(1),10); if(hs>=1&&hs<=slides.length) cur=hs-1;   // קישור ישיר לשקף: מצגת.html#7
 var hp=location.hash.split(':')[1]; if(hp) setTimeout(function(){openIdea(+hp-1)},0);  // ופרומפט מתוך החבילה: #19:3
 function show(n){
@@ -741,7 +741,6 @@ function show(n){
   document.getElementById('count').textContent=(cur+1)+' / '+slides.length;
   document.getElementById('hint').textContent=SLIDES[cur].hint||'';
   document.getElementById('prog').style.width=((cur+1)/slides.length*100)+'%';
-  try{localStorage.setItem('lomdot-s1-slide',cur)}catch(e){}
 }
 document.getElementById('next').onclick=function(){show(cur+1)};
 document.getElementById('prev').onclick=function(){show(cur-1)};
