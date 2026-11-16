@@ -589,7 +589,7 @@ var R = {
  flow:function(s){return head(s)+lede(s)+'<div class="trio">'+s.boxes.map(function(b,i){
    return (i?'<div class="arrow">&larr;</div>':'')+'<div><div class="screen"><div class="bar">'+b[0]+'</div><div class="body">'+b[1]+'</div></div>'+
      '<div class="caption">'+b[2]+'<em>'+b[3]+'</em></div></div>'}).join('')+'</div>'+
-   (s.info?'<div class="row" style="margin-top:34px"><button class="cta ghost infobtn" type="button">'+s.infoLabel+'</button></div>':'')+(s.links?'<div class="row" style="margin-top:34px;gap:24px">'+s.links.map(function(l,i){return '<a class="cta'+(i?' ghost':'')+'" style="padding:20px 44px;font-size:30px" href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+'</a>'}).join('')+'</div>':'')},
+   (s.info?'<div class="row" style="margin-top:34px"><button class="cta ghost infobtn" type="button">'+s.infoLabel+'</button>'+(s.links?s.links.map(function(l){return '<a class="cta" style="padding:20px 44px;font-size:30px;margin-inline-start:24px" href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+'</a>'}).join(''):'')+'</div>':'')+(s.links&&!s.info?'<div class="row" style="margin-top:34px;gap:24px">'+s.links.map(function(l,i){return '<a class="cta'+(i?' ghost':'')+'" style="padding:20px 44px;font-size:30px" href="'+l[1]+'" target="_blank" rel="noopener">'+l[0]+'</a>'}).join('')+'</div>':'')},
  tabs:function(s){return head(s)+lede(s)+'<div class="tabbar">'+s.tabs.map(function(t,i){
    return '<button type="button" class="tabbtn'+(i?'':' on')+'" data-tab="'+i+'">'+t.name+'<small>'+t.sub+'</small></button>'}).join('')+'</div>'+
    s.tabs.map(function(t,i){return '<div class="tabpane'+(i?'':' on')+'"><ol class="steps">'+t.steps.map(function(x){return '<li><div>'+x+'</div></li>'}).join('')+'</ol></div>'}).join('')},
