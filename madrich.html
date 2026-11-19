@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>המדריך המלא: מגיליון לאתר שכותב לגיליון</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#0181C9; --deep:#0B4F7C; --teal:#6BE3D1; --teal-soft:#E6FAF6; --teal-line:#BFEFE6;
+    --yellow:#E5E633; --orange:#FA7548; --ink:#303030; --body:#4A4A4A; --muted:#6B6B6B;
+    --line:#DDE7E8; --bg:#F6FAFB; --ok:#1E8449; --ok-soft:#E8F6EE; --warn-soft:#FFF4E5; --warn:#9A5B00;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; scroll-padding-top:120px; }
+  body{ margin:0; background:#fff; color:var(--body); font-family:'Assistant','Heebo',sans-serif; font-size:18px; line-height:1.75; }
+  a{ color:var(--deep); }
+  .mark{ background:linear-gradient(transparent 58%, var(--yellow) 58%); padding:0 4px; }
+  bdi, .ltr{ direction:ltr; unicode-bidi:isolate; }
+
+  /* ---------- top ---------- */
+  .hero{ background:var(--teal); padding:34px 16px 44px; text-align:center; }
+  .hero img{ height:52px; display:block; margin:0 auto 18px; }
+  .hero small{ display:block; font-weight:700; color:var(--deep); letter-spacing:.04em; }
+  .hero h1{ margin:6px 0 0; font-size:46px; line-height:1.15; font-weight:800; color:var(--ink); }
+  .hero p{ margin:14px auto 0; max-width:620px; color:var(--ink); font-size:19px; }
+
+  .bar{ position:sticky; top:0; z-index:20; background:rgba(255,255,255,.96); backdrop-filter:blur(6px); border-bottom:1px solid var(--line); }
+  .bar-in{ max-width:900px; margin:0 auto; padding:10px 16px; }
+  .progress{ display:flex; align-items:center; gap:14px; }
+  .track{ flex:1; height:10px; background:var(--teal-soft); border-radius:99px; overflow:hidden; }
+  .fill{ height:100%; width:0; background:var(--blue); border-radius:99px; transition:width .4s; }
+  .count{ font-weight:700; color:var(--deep); font-size:15px; white-space:nowrap; }
+  .chips{ display:flex; gap:8px; overflow-x:auto; padding:8px 0 2px; scrollbar-width:none; }
+  .chips::-webkit-scrollbar{ display:none; }
+  .chips a{ flex:0 0 auto; text-decoration:none; font-size:15px; font-weight:700; color:var(--deep); border:1.5px solid var(--line); border-radius:99px; padding:4px 14px; background:#fff; }
+  .chips a.on{ background:var(--deep); color:#fff; border-color:var(--deep); }
+
+  main{ max-width:900px; margin:28px auto 0; padding:0 16px 80px; position:relative; }
+
+  /* ---------- sections ---------- */
+  .part{ margin-top:46px; }
+  .part:first-child{ margin-top:0; }
+  .part-head{ background:#fff; border-radius:20px; box-shadow:0 10px 30px rgba(11,79,124,.10); padding:24px 28px; margin-bottom:18px; }
+  .part-head .tag{ display:inline-block; font-weight:800; color:var(--blue); font-size:15px; letter-spacing:.06em; }
+  .part-head h2{ margin:2px 0 6px; font-size:32px; line-height:1.2; color:var(--ink); font-weight:800; }
+  .part-head p{ margin:0; }
+  .part-head .meta{ margin-top:10px; font-size:15px; color:var(--muted); }
+
+  /* ---------- the big picture ---------- */
+  .flow{ display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:10px; align-items:center; margin:18px 0 6px; }
+  .node{ border:2px solid var(--teal-line); background:var(--teal-soft); border-radius:16px; padding:14px 12px; text-align:center; }
+  .node b{ display:block; color:var(--ink); font-size:20px; }
+  .node span{ font-size:15px; color:var(--muted); line-height:1.4; display:block; }
+  .arrow{ color:var(--blue); font-weight:800; font-size:26px; text-align:center; }
+  .two{ width:100%; border-collapse:separate; border-spacing:0; margin-top:16px; font-size:16px; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  .two th, .two td{ padding:10px 14px; text-align:right; vertical-align:top; border-bottom:1px solid var(--line); }
+  .two tr:last-child td{ border-bottom:0; }
+  .two th{ background:var(--deep); color:#fff; font-weight:700; }
+  .need{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px; }
+  .need div{ border:1.5px solid var(--line); border-radius:14px; padding:10px 14px; font-size:16px; }
+  .need b{ display:block; color:var(--ink); }
+
+  /* ---------- steps ---------- */
+  .step{ background:#fff; border:1.5px solid var(--line); border-radius:18px; margin-bottom:14px; transition:border-color .2s, box-shadow .2s; }
+  .step:hover{ box-shadow:0 6px 18px rgba(11,79,124,.08); }
+  .step.done{ border-color:var(--ok); background:linear-gradient(#fff,#fff) padding-box; }
+  .step-top{ display:flex; gap:16px; align-items:flex-start; padding:18px 20px 6px; }
+  .num{ flex:0 0 44px; height:44px; border-radius:50%; background:var(--deep); color:#fff; font-weight:800; font-size:19px; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+  .step.done .num{ background:var(--ok); }
+  .step.done .num::after{ content:''; width:16px; height:9px; border:solid #fff; border-width:0 0 3px 3px; transform:rotate(-45deg) translate(1px,-2px); }
+  .step.done .num span{ display:none; }
+  .step-txt{ flex:1; min-width:0; }
+  .step h3{ margin:4px 0 2px; font-size:22px; line-height:1.35; color:var(--ink); font-weight:700; }
+  .step .short{ margin:0; }
+  .tick{ flex:0 0 auto; display:flex; align-items:center; gap:8px; font-size:15px; font-weight:700; color:var(--muted); cursor:pointer; user-select:none; padding:8px 0; }
+  .tick input{ width:22px; height:22px; accent-color:var(--ok); cursor:pointer; }
+  .step.done .tick{ color:var(--ok); }
+  .step-body{ padding:4px 20px 18px 20px; padding-inline-start:80px; }
+
+  details{ margin-top:10px; border-radius:14px; background:var(--bg); border:1px solid var(--line); }
+  summary{ list-style:none; cursor:pointer; padding:10px 16px; font-weight:700; color:var(--deep); display:flex; align-items:center; gap:10px; }
+  summary::-webkit-details-marker{ display:none; }
+  summary::before{ content:''; width:9px; height:9px; border:solid var(--deep); border-width:0 2.5px 2.5px 0; transform:rotate(135deg); transition:transform .2s; margin-inline-end:2px; }
+  details[open] summary::before{ transform:rotate(45deg); }
+  summary .hint{ font-weight:400; color:var(--muted); font-size:15px; }
+  .more{ padding:2px 18px 16px; }
+  .more ol{ margin:6px 0; padding-inline-start:22px; }
+  .more li{ margin:6px 0; }
+  .why{ margin-top:12px; padding:10px 14px; border-radius:12px; background:#fff; border-inline-start:4px solid var(--blue); }
+  .ok{ margin-top:12px; padding:10px 14px; border-radius:12px; background:var(--ok-soft); color:#1c5b38; }
+  .ok b, .why b, .careful b{ color:inherit; }
+  .careful{ margin-top:12px; padding:10px 14px; border-radius:12px; background:var(--warn-soft); color:var(--warn); }
+  .kbd{ display:inline-block; direction:ltr; font-family:Consolas,monospace; font-size:15px; background:#fff; border:1px solid var(--line); border-bottom-width:3px; border-radius:7px; padding:0 7px; line-height:1.6; color:var(--ink); }
+  .q{ font-weight:700; color:var(--ink); }
+
+  .cta{ display:inline-block; margin-top:10px; padding:10px 24px; border-radius:12px; background:var(--orange); color:var(--ink); font-weight:800; text-decoration:none; box-shadow:0 6px 16px rgba(250,117,72,.25); }
+  .cta.alt{ background:#fff; color:var(--deep); border:2px solid var(--deep); box-shadow:none; }
+
+  /* prompt / code box */
+  .copy{ margin-top:12px; border:2px solid var(--teal); border-radius:16px; overflow:hidden; background:var(--teal-soft); }
+  .copy-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:8px 12px 8px 8px; background:#fff; border-bottom:1.5px solid var(--teal-line); }
+  .copy-head b{ color:var(--deep); padding-inline-start:6px; }
+  .copy-btn{ font:800 16px 'Assistant',sans-serif; border:0; border-radius:10px; padding:7px 20px; background:var(--orange); color:var(--ink); cursor:pointer; }
+  .copy-btn.done{ background:var(--ok); color:#fff; }
+  .copy pre{ margin:0; padding:14px 18px; white-space:pre-wrap; font:inherit; font-size:16px; line-height:1.7; color:var(--ink); max-height:300px; overflow:auto; }
+  .copy pre.code{ direction:ltr; text-align:left; font-family:Consolas,monospace; font-size:13.5px; line-height:1.55; }
+  .fill-in{ background:var(--yellow); border-radius:4px; padding:0 3px; font-weight:700; }
+
+  /* drawings of google screens */
+  .shot{ margin:12px 0 4px; border:1px solid #dadce0; border-radius:12px; background:#fff; overflow:hidden; font-family:Arial,'Assistant',sans-serif; font-size:14px; color:#202124; }
+  .shot-cap{ font-size:13px; color:var(--muted); padding:4px 10px; background:#f1f3f4; border-bottom:1px solid #dadce0; }
+  .menubar{ display:flex; flex-wrap:wrap; gap:2px; padding:8px; }
+  .menubar i{ font-style:normal; padding:3px 9px; border-radius:6px; }
+  .menubar i.on{ background:var(--yellow); font-weight:700; outline:2px solid var(--orange); }
+  .dropdown{ margin:0 8px 10px; width:220px; border:1px solid #dadce0; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,.12); padding:6px 0; }
+  .dropdown div{ padding:5px 14px; }
+  .dropdown div.on{ background:var(--yellow); font-weight:700; }
+  .dialog{ padding:14px 16px; }
+  .dialog h4{ margin:0 0 10px; font-size:17px; font-weight:400; }
+  .field{ display:flex; justify-content:space-between; align-items:center; gap:10px; border:1px solid #dadce0; border-radius:8px; padding:7px 12px; margin:6px 0; }
+  .field small{ color:#5f6368; }
+  .field b{ background:var(--yellow); padding:0 6px; border-radius:4px; }
+  .gbtns{ display:flex; gap:8px; justify-content:flex-start; margin-top:10px; flex-wrap:wrap; }
+  .gbtn{ border-radius:99px; padding:5px 16px; border:1px solid #dadce0; color:#1a73e8; font-weight:700; }
+  .gbtn.blue{ background:#1a73e8; color:#fff; border-color:#1a73e8; }
+  .gbtn.on{ outline:3px solid var(--orange); }
+  .url{ direction:ltr; text-align:left; font-family:Consolas,monospace; font-size:14px; padding:12px 14px; word-break:break-all; }
+  .url b{ background:var(--yellow); outline:2px solid var(--orange); border-radius:3px; padding:0 3px; }
+  table.sheet{ border-collapse:collapse; margin:10px; font-size:14px; }
+  table.sheet td, table.sheet th{ border:1px solid #e0e0e0; padding:4px 12px; min-width:70px; text-align:right; }
+  table.sheet th{ background:#f8f9fa; color:#5f6368; font-weight:400; font-size:12px; text-align:center; min-width:24px; }
+  table.sheet td.h{ font-weight:700; background:#fff8c5; }
+  .tabs{ display:flex; gap:4px; padding:6px 8px; background:#f1f3f4; border-top:1px solid #dadce0; }
+  .tabs span{ padding:3px 14px; border-radius:6px 6px 0 0; background:#fff; border:1px solid #dadce0; }
+  .tabs span.on{ font-weight:700; color:#188038; border-bottom:3px solid #188038; }
+  .shots2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+  /* troubleshooting + glossary */
+  .fix{ margin-bottom:10px; }
+  .fix summary{ color:var(--ink); }
+  .fix .more p{ margin:6px 0; }
+  .fix .more b{ color:var(--deep); }
+  .gloss{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .gloss div{ border:1.5px solid var(--line); border-radius:14px; padding:12px 16px; }
+  .gloss dt{ font-weight:800; color:var(--ink); }
+  .gloss dd{ margin:2px 0 0; font-size:16px; }
+
+  .tools{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:22px 0 0; }
+  .tool{ font:700 15px 'Assistant',sans-serif; border:1.5px solid var(--deep); color:var(--deep); background:#fff; border-radius:99px; padding:6px 18px; cursor:pointer; }
+
+  .end{ margin-top:50px; background:var(--teal); border-radius:22px; padding:30px 24px; text-align:center; color:var(--ink); }
+  .end h2{ margin:0 0 6px; font-size:30px; }
+  footer{ text-align:center; color:var(--muted); font-size:14px; padding:24px 16px 40px; }
+
+  @media (max-width:720px){
+    .hero h1{ font-size:32px; }
+    .flow{ grid-template-columns:1fr; }
+    .arrow{ transform:rotate(-90deg); }
+    .need, .gloss, .shots2{ grid-template-columns:1fr; }
+    .step-top{ padding:16px 14px 4px; gap:12px; flex-wrap:wrap; }
+    .num{ flex-basis:38px; height:38px; font-size:17px; }
+    .step-body{ padding:4px 14px 16px; }
+    .tick{ width:100%; padding:0; }
+    .part-head{ padding:20px; }
+    .part-head h2{ font-size:26px; }
+  }
+  @media print{
+    .bar, .tools, .copy-btn, .tick{ display:none !important; }
+    details{ border:0; } details > .more{ display:block !important; }
+    .step{ break-inside:avoid; }
+    .hero{ padding-bottom:30px; } main{ margin-top:10px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANkAAAB4CAYAAAB//lc9AABlKElEQVR42u29d5xlV3En/q06977UYfKMsoQIghlhk4MEGgkQApGEodtrgsEB4YxljLG97Pb0etfGi/kZr228yGDAGGO6wdggMkIBJCQkoTijnEYjzWhyp5fuPVW/P8459577ukeaAexFoh+fQRO6X7/ud+pU1be+9f0Slh/Lj/+EhwIEPfS/E4UPe/w9aPntX3782AJJQdgyQdObttG6dbvpzDPXKzCtAJTo0QNoYgK8adMYjY2Fv9mowBYlIl0OsuXHT21QTU+PsQuoy4QIcuhMpnTdtdcl/f5lyRNawvsOzBMA7MFJ+Zl73p7RONtHSmSqY6YMvMnDCtrlIFt+PEYDa4KBbQRM62BQXXLJJY11o188Ts3cU0l6pxD6xxJlx4nYVWRoFShvCuUpkRpVJoAA5QxCPRWaU5H9RMkuyNADVmm7oHa7yY+/+xmn/4/dgwGoOmamp4GxsWn5SQ+45SBbfuDRy7gJ3rJlGwHVA739lgtWz/VmTgV3ng90ng/SU0FyQr0hzXoKQC1ULSwEFgpVdelPAfj4VGIACiKCYQEDUE2QC9DpGljLe8Ta25Gn19ts6FrbW3Pt9v3/9/bxcbLhdUxNuSw3Pj4tP4l93XKQLT8O+YgOb3Ggt93wq09RtF/C6J+jaD/PJDim2QQUGWyeo58Bea7usBNUoQQCVJV8dEVBpoBSOIaqJFCI+zQoAcYkCZAYIDWMPE8xP5/0SOu3iq1f2u83v9p5+ElXnjU+OV8tK3+ysttykC0/FqOAU2NMUWBtve7dJ9bqD79GZP7nVHsvGBrmJsii28+RZaIKFfXwhqiQeygIBCnjDQqAKPxOoQhZDSAQlHy28w2fAkoqIIKoqBIpEZGp1RiJSdDp1JH1zD2i6ZclG516zov/5bshkf0kBdtykC0/KpmrzFqMW6//1bOM2fd2gX3t0HC+UqSPbtfCilglAGB2ZygcbI2D1QWWCogUPpuBCFCR6OPIQ/gE1bLaC8/FUJfwXIS62FOoqlWQ5UbdUJrWMDdnkHeHr+jboY/vn3viv7761e8/AAA6NWbw/7hvWw6y5YcHMxxip6p8182/+gbLc79pTG9zs9HHQqePPBcLUkCYlVzpR/ClnqoLACoykM9QLshQlIEEgoJEixMvVCSuJdspcikSom4OQP7vSBSiBGIRAZTImma9BpEG5hdq9+W9oY8d3Lv+Y698w4U7Q7DR/6OebTnIftrnWhhjIpe97rzxl19LZv69SSM7jaiLhXZfVVUoyljq6ztX6oV+ymUq8ZnKfUDIVuIjKDrfWk6gJcpcVIkzX06G36vPjj6QXXQKiC1ACVQIqhCCaFqDSZMmZmbSh7LeyId33n/8//25t/3tvnChEE3KcpAtP/5TS8Nbr3vrc6jWn0zT7rlJkmGhk4s792IozjTkDj7UoYE+dRWnqFIuqvX/5ms9UahHFKmIMYoymfsYgoI84ug+nirP64I2lJkKZoUqQTU8EUFVRVU0TcjUakOYmW3cm3VHPnjLv7z8wnde+M5samrM/GdC/8tB9lM6QB4fn7a3fvc9I2bFfX+k3LtgqGEbs922qCRgMuyyh40+LyAUJSLoQIzMlYKaFH1XGRShXPTP5SZj4Oho2+ick7ogc72XVr42FX/nc1/o8cAeVCGouE6Q1EWPiCqRlXodJqHVODjXuKLfbv3hi8+e/u7iHnQ5yJYfP6beK5RKd1wzdjY1ex8cGsXTZ+f7EGutsBqCgpR92aaVfokCxFFkDgW477NLWoAXro0KfZcPMgfNOzBDS6Ki+qCh4gtpUR6G2pOiICfy/ZkPT1IDJnUQicM5Xa9I5XMDVgDVZqNlegutvNse/avtd5zyJ+Pv/PMZ1TETyuXlIFt+/IgB5g7TlVMXNNc+9YH/wdx7d1rPqd2z1hIxqb/+yfVOHKZV6jNWkdXckRHxPRbnPjAYZUPGgNgoWAZ6MnBJCrZREGr4mlr0a54XAtFyBACVqOcLz6cgkWr9F4Ex7vdiCTDN+ihmZlq3LMyP/NZLXj59WWgH/6PKR14+fj89AXbzdb/ytA0bd3xzZDT//b52sNAVAbFhBRGRL+tKyFw1ZJWov0L5y8UUFXMuiIbEtcRNTtW+ClJC9lqCKcVn+BKR/ISA/WGlMFsTVxaSUmVsAHIoZBGd0dyNFQaSaKczm4+M7Dt15eiBb1x28XnvISKPrE7wciZbfvwQ6OEEEU3Ktuve9HO1Rv8jSaOzttPJcwEZEBHHvY4KRCwKDka4g0mjGdbgkbG+FGRIUaqx7518/0bhc6XSZ6m6jFn8vZZHMvw7hVgJNCz1fVf0OjTAkiIuuAa+BoU9GlEQK4gM1EKIc67XVuLg/tZnDjyw5tfOfeunZ/8j+rTlIHtcB5grgW676Rffm6bt9wu30cv6lskYovgwoggCUVsCCFEmAbkgVHElG7ErIVXLjCYiKJ+3LP0YCqLcwRNEPqBddFiV4hRSwAzDvxXjagJ5AMX9u2NoKaxDKKPMqsVsnKJe0v3ePYfPysoQzZUAabVGzP6DI1fP7F3zX175+s/e52dqdrlcXH7gkQi9ASS47cbxvx5ZOf/+vm1rP8uEyRj4XFUigQoRW5SKgHEwOoVDKRHHkCJYPfyZH+X+LnOjCkHFAGoAsP868fMWqQlMAPsBdhSJiAiQxSignLVpiWoiLm9LrqT7NsU/mzEL7U6+YsXs81et3/Wtr35+/Fk0Pm3L1ZrlIFt+LBFgk5OTcuGF5yd33PjGT65enf3W3Py8BSnIDaD8YRbfa4kf6oaAMwHq8/MqKgbQ8CBIGT8EIvZII1UOe3W25T8X7AJIyZWBnm4FjZoqjQ+ngrlcqQ4Zk0gA5JUAK7Oyz7jRAFxVKn1h+Sn+EiFO2gs9O9yaeeKaDfu++rWLXnca0bS95JLNyXK5uPxYMsDu+Mpv1/W4nZ9eudK+YWa+nVtwEniESgQVBpFCNS/nT9H8K/Rlg5BFGTdSfHyoNInUw+patm5KUAE49Ghk/RxL/cxMISoF4EEBjQQAZZQjZ/+EFJGHPRhDDKhyOTqA+tfin0P91ywYYCHwqMxs8NlbrE3rqel0hvcf3LPq9eec98XLfxw92nKQPc56sAsvPD/Z/MID/7x6tX3jgdleDkhSQO6+XfGINkRyX4yp73cYogBJlTW/eBhdlm+OZe+zC0mRkkKgsjKEGMXMbGAYHYbVRU9YtGimCGiNey6Nj20GJQGEoGoAZSgEzLnH/RPAZzaHOkbAi0SUsKLMZKiqTWtsOu3V+2f2rTj3nPO+ePWPGmjLQfY4QhGxBbjr5275x9HV+ubZuXYuWksUmQ8ol8XKAXO40TXKFb4vEo1KtGqQEXuqk3ABlISTRGQ98FD2RSYS+AjUJ9bo+Tx9qlh/UfJMLS7KVtc/WZ99EfVvEiGWiXtNZB2fEQq1iT/gOdyuWrV81YgnCZUClBFhW68nptNetfPgw8MvP+cNX77lRwm05Z4MjwcxpDEmmpTbX3fbh1au0TcfnJ/PLSgB9YuBsEMJA89XS9QuAiWKQ0EeWSwkpOLUYzwsn0NhK8BCYHq4j0tAagqEMQRzRbAglKkUgtm/It/3qd9rKQELLo6sajxOML50tGAOgA6q8zONyMkVrmPoF1OfCRkwZHq9vm0NzRy9Yt3Cv35x6tUnjI9PW/WA0nIm+ykdNG+7duwPV63VP5vtzOVWkYSkRZJWQQiSyrxKxFbQhhBYouWQuETyyFOiHPBQrj9rRAb2WQYMggWrLXA8UgGEIxhfIWQdwBKRjeOBeOA9kqLaP5LxMdsD+SCLj7NjpPhLxV8Gbm2GfVnoScwqABuPhvhZHGx4fXa4MWIO7Bu9av7B5GUvf+s32z8MM2Q5kz2WA2zKBdhNV7/59c1h+6ft7pwVJUMwvuk3SwQYKgcthuXL2VYF5ShZTIoCudOQFX1gElElWBkO0RNPbQoloZL6P/uESNHAGzpADMbA81dzg6MFG8/C5yI7xaUo+5UcUvYfM0DxIt+VqvV7b7b4WRASM9/t5GvWzb9g6Cj7YSLo9PQYH2lyWs5kj3Gy79bv/cKT68Ptq0yareqrUSVmiC1Rv6j/UQ97lyWXRPSomG0vSx72EDxlW6NRKel7KwkZz4EN1jM6CLk7bFJmjYJdX2GDUPk1LTxDQwdGA+T7S1m0YlMSjLUohjXae3Ob2gLARBnYsVRUbTlQJzcbdLQtkzebrWT3zqE/OOuVF3/gSIfVy0H2GAY6tm5FkmTXf2tkZf7iuYXMsmkYKRp5LRjzUIVEJV1YkKQoc8QH2UNzPri4PIzQAviALxupstYS1izJfT0SKLmPCR8XJHJ8Ueq/LruKDvHcjKAcDZNFB8IIHm0MHEiKAqzs7zCwMlPlXNpoPEAQgRtrlMWxu1ZENUlEJV+R79szcvY5533z8iNZ/lwuFx+TDwd0cO/GiZVrzIvn2tYSp0aiuk4HSyIiEHNU1lXbChFxCGSR9RChj/Hx9lmQZIkbOgJS3LS5mE8Vr4Z9dETLoOrnZiWUDzyyaHeA8z2oQ1ylh5EFyHEq/ezbl6aBXKJumO1V5dRTtBzDBSAkgCZQNS7zcUa5tag3F2rDK7oXXvTpV63asmWyGJssB9njskyctjdf86bTm0P6nna7b0EJgxhKfqrkM1elHSMaOBHquYfuV+h5yiD0XEHybPjQPxVxqwP9XRm8NDi886RhKXQWyxpUJXANwwXhV188XK/iyj0tQAzf22l0IVRgfS5WX0qQR0AYpFmVfM2SrG999tKyDyzYL+BOt2dXrWmf0lrV+fPJSYjvz5aD7PE4cL7h628ZqjWyD3PNpn0rxJQSPNhB4KLRd+Of8kBKTHciOLY8MYi55BGGRUqNO4qI8yfqDr5FBM+Lz53st13C1/Bggw8QR/QNJ5r9SKGyPONBjMXCOuTRkjBHK4MupCpPv1ICqXG/YqY+qoRoB4IkQQ+rAIoA9uBM4GwyFCmAFKAat9vzdsWq7B1f/fw5rxofn7ZBm3I5yB4nj+lpVyama/rvHV0pP9PpZJY4YS1KNeODq9y1UkgZCBoDGr6cY/bBFs/L/KKmlGCBhv0vr8UBcUESI/0KgXhlqpJYXAIwDIBEooCBozMhgWoCReIDNWSQkJ2oCJSAJEbLY05Ux18AVC7D+TmcjTIfiuBWDUTlxIEgYD9vIwBJJZs7PqcBSMnahJLaLFor5//3P37gLUNbt07ro5WNZvnoPnbKxFNP/bDcefUvbkqHFj6RSceoMoOYSmJsebgCdUop0Kn8Lc9UoImVgBMp+pwKw73Y5dJS/dQ/R8GYD1xB1jI2QlcXVIMReycNwvEl36TMaVRsZWMQmietwvgldhEzLf2nUalJEl0ioS9c0rFJHSm6IDCHTW4IiJgya+2KkXRD2urN/NI77v3upk1jZnp6my5nsseFuq9SnmZ/Xm+h2e+TqhqKM1S83kF+pX+xsI1WArLKxveEXdXo38mzPFx5xkyR5objKxaAghp3b2v5iyTxfc7A+S5+OcqUamCQlHMxNlqu22jcS0Vzs4gVEl8e7vWz0x7xQAbiEjOIzrkpd2UWR+z0SFR8xhvsYyHU789qvd75/S994lXHjo1Ny8TEoWNpOcgeM0PnSbn9B7/8iuZw9qqZdlfAZBwfr0J6chw9thDKoWTduoi/7R2wZh2cLp6vBwFTqQZF1bPswYMAKIRsMYhODu6UKVgdO4RCnChFO2laUQsue8GwuUwVeNHpUUkJzHh2f8FGYQeoCDhCEyMKWbk04PstKaTtQglMGpsRckVWi4oNcJdhWYizLJfR1e11rXWdPyCCbto0RsvlIh7D3MSN2/DBD34kMeauT9Qb3eOy3Ipb5Ipa+0olVjI4KAAcCD2WoOKpF51nLQRxdDFk7jUQK/c6uc1KjeTfXLD6j9OBITdHO2nR5nKZvXyJG0tz+6xU+lJQZQgeVK3K1U4f8EpRr6mIxY6LnTqqTic0uiwK6YRiE0Aqd4sqkUUOAm969VlPn3rDm764HwBfdtniwQP/5JNfK1fgTyM3kScnIaPJ9a8dGe2/oN3pCZExDnigMihYi9KtUk55BNF9XOJAhihHOHSNyqEsSnpS2YTlXn5gYB4WCMRUZj310+bA/AiiAur/LpB+C8uJAepUOfcmQLjoLYtyMOZe+qPh9Xsg6rcD1IMYytGATEuFfmGIup+Hsil1iovPj48cFxfTQNlLWQZZuSIbWbGu/VtE0C1bJo6M8TExMcGbNm2irVvX0aZNZ+o0pjE9NjZwDf5YjxONTU3z7q3raP2mPbrk11KlselpBoCpsTH5YW1OJyaUL8UWBs7E+k17dOPWrTo5+Z8g3exf/+6tWwkA1m/apI/2M3XIldJtN77p0uEV7RfPL/SsY8Qm0fpJRDsKR9jD+Rr+XjIwKYxRkB/CUkHxJYgV5JaQ+4XOYiNZw0oJF/C6Azhc2UWeqOv6KgeNi5IXKs1BnMMQOUoXlQRjUYEIQcQDEJQAyNyBJ4Z6NSol6wAHH0RCQfpNIiGqMti5IvBdAe4r2bOUl/P8rQp5OKzWULlpoAQl9tWzH2ILa5Iyeu0VB2fvWvUz557/tR0TE+DJyao5YrLUQZjYApqcpCUP3djUlJkeH7c/zm3ebZs20fQ42elxVJ73I+efnz509NHmJAAnXXppfhZRPu0JOARgQpWxZQsOO0D8uzFJ4TqcrATe5CTpf5QhwdjYlJkmsuH1L/q36cU/0ylPAL7nB+efkTZ6L5qb7yuzMRjswzRGA10/BDWwyAGrSBKAag3kWsds1sB8t462TSGSICGL1LQxVOtgpNbFMPeh0kaW58hVHUtEywG1sgs48TB6TLMia6HIkJoEzAkyaiDTBmayFZjrpciEYNBDnXpopR00kzk0ah2QCrLMUYhdy2X9vMpTv7yADjHApgmjJsqCGpawvdipB3wozM6opJGxVmhWoQ/Vgc6WRCsoK0Wa/swApIOsCwgL5bnY0VWdVfmx9Z8H8MEtm8ZoEtOPlMm02PH+w7+ZepJw8zncrB+VSd5uaP229swN1/zlu9/d8diq/jhu9RCwF4xd0NQXn/ksSWunkzHPzImOznK7FoSahSJX7SZIH+Is20roXtHKF773od97684o8B/FsaP83n7h/Z94XsuMnG6NGRXpPljr9y7/6B+/7Y4BTBk/Rl0AxuSknD/x6bV7GGe1VZ4KMlpTe3dy8P5Lv/Ch9+1c6mca+HG33/jWTw2vmHnLzFzHGk6NEvnSSIqKsCDFEoPV04aSBKJH4/4D63HTzhHcu2cVHpxJMNNromf9XElzJNzHUJphfauHY1bvx8aj9+NpGw5gdfNh5P0ecltqIQpbX4olBbNfnaYhTJqgjfXYuX897nq4gTv2juLh9jBmu8OYbbtMxJwhgWCEu1g1dABPXHsQzzhhH568bg8aPIteL/Mz6qTU1CcBc4r9/SfhW7eejJ37GSYxxahCPXAjUDhydCVkSgyHAFqyeCsDVlXKS4XUSycEyTkLQxk2n3IfNm64Hf2eQkSk3iSaOziybWHrhmef+66v9QbPEFVueSJ97/s/skLWnfwBTRpvorQ5hIQhNoNmfZDNbm3P7P3g3/3u+MdUlYgIP8yBDFoUAPCeD336yf3mmrf3lF6vpvk0ajSKl2hzp5+eez29xDAYBrA9IOvuqef2S7W5h/76L/7gl27w679LB7//3s5///tXdJKT/qabjrzZNIaJCLDWQnudhaSz8Hcj937rjy/8yEdy/JDf1yN9r69930d/ud1atyVJa8c7PmyCVBXan9/F8/smvvyn77gwDrTweTtu/r3j57H9JpPOr8zz0KFQtIEcuHhUrGQxOmCzDrfNPB3f3nYMbrq/hgPdmivDmGGYYSjgddav7zv+Ym4FqenhxFUzOP2EB3Hak+/CmsbD6GcZxAcWwQJkQJpA0EMtSbCAk3HjjhNx+d1H4/Zddcx1Ulh2LBJGAmHHajd+QG4lQ24V0ByjSRdPX/8gXvn0u/DMY3agbw+iL4nr0wQgzpGbDfj8LW/AP13RQpIKTNgHKFJYyGmC4CTBJYvYgSPK5TQuSNGFbKixdkgQ66Hi8hIFWBhdMXjS0LV4z8u/jnXDPQgxGEbTpEVzu9e87CWvv/TiwS3qJA62sQsuaPZWHTtdW3XU2d25WaDfEfRI/cyFk3rzacNrj/voBR/41PFEtMUfBP1hDt3ExF+N7l9/0vvataHzTXN0BYlA+n1k3Y61EuphkHr2NRPBQlWY/Tw0XWdHV/7yLJtfeOuffe79n/qjN/6J308fDDSa2LKFMDFhHkhP/mSy8ujX2YWu2E5bAuGcTTrUWH/87y/0T18FondMTEzQkX5fh+r9JidJXv1fP/5WGV33sVwNsm5uEyOq2nMdRNo6qrbSfOTV7/3QvouIPh9Kxy1bttHkJNDR/WMjI/nKmQVrGcYotAIiqirYEtTkHi5WtJOT8aUbnoWv3bQCXUlQM4yhOjvWH7lZmOtHLFgdhYj84nQzNRC0cPdsHff8YBUuuWMNXrfxRpz2pPv8giODxAAksNyHMUO4Zc/P4jPXnYw7Hx5BXxnNlNFoOMBBrRPYsV5d23hOYcrGESnEIKMavr9zFDftXIdznnI7Xv2MmzGazCK3KWB6MGzQzRt4cLdFa3QUwyZ3uEiJ4xe0LuSZ96n2ri8Rgdgx+WXg/i2RR4iC2LhfXg68NG8iqBUMUR17dyq++51dOGdzA7VmE8QkzWbfLLR6/wXAxUsCH2NTaqbHyf7eR77268nqYz+80J7LWDWRQh89vAhr03qDcHC/Jgfufs5fvO+3boiz0qNXiEpEpH/4N1NPmk1XfTYfWvks2+1CVXMhy4mAlVw77oRfokbV7ymw8zSFApKrBZCkiamhu2/75+Tay39pevrv5l3X7AIt9JBv/t+ffYsd2fCpXpZnBE0YQg4YUNg8V0qNrSsl8sCNv/jZD7znU4fqk46kHAYRXvM7H1rfX3v0jbY5ul76XYEaYwNYzARS5Dw0YnRux5Wn/7e3njGpEUtni9Idbxy/rN6aO73dFSElE+sYhvMhbKFg1DXDPD0N/3j1M/HtW4eRpl5KAIKEAEvGM5ACU16c6i4i8z6oa/DV3eb9jMHtB/C6TVfiVc98AIkBDCWwbJGYFbjigRfh7y8/FrP9FPVaAqPiMeuIcqXsgD4VcCwBrr7/IvUlLqHXXcCzVm/FW067AcesOgAlAyZGakbwrRtPwEe/sx69fsO93gC6ePYGJzVQYxVMazWULFQsiCKAaIlrU9QJ8RARklShnYPIZw9AbQ6xfQgcuOP0IRW1fAH2/ktw2sbb8frXrMLwSA21WiqNuuHOwuiDe7efcOrrf+nfDxarciGTTY+58O4ieV1NrJDNWDghCcM6MjBuLGPU5tbWW2bvPL0SwA3bNm2iwz10BOBdf/mFlQdo6AvcWn1qp30wM+BEVRNht4jHsVWO/yGIiNZqdT9LtY7UmiSGMot+r2s1yXXFhpPemD2H0s0b173xzC0QD2no9NatCgC9PHkTlBVimZhIwM44UhQKJsly7iQ11dro+35jbOwLH54eW/hR+rOx6WmeBqyuXvsm01qxIet2rVJiJAi6kN+5Aoz2OmQofcpN7373WhDt3jIxkUxOTuZ3bv3NjRD73F5XSJW5uv9V7gaTKoxYdNMn41+ufQEuu72GZsNji6YGUB9irWM3sjt0uc0AJpCJeX8uONh7PQuAJMkhQ8fj325+DobTA3jZqQdgjSBBE3cePA2fuvqJWLDiMqWwpzlxZehClQWwHEmauoXOPHNyBJxCkAPWojU0iusPPge4QvCOl16L1c155NqEyAzOOPVWDNvv4/s/mMH+g31kPYIVPwszBO4b9LrrsdeeifbI84rSMJYtKLo1KTX8xRAS6aO99dvAQ5diw+gc1q5LkBp3QVjrkExjCM1GhpXPBDY+db3rUNRC1HC/D2kNZceuWjt7BoAvOoa+KxkTPx3U888/PwXz8dbmbCmRoI0HZj8VcT84C0aOvs4vLBwHAANAyiMfuvFx2/s///YOHll1arczmxlwqmHvSF0ZI94roFiBJ9ZGo0G777oNO++56zqV7JrV64/eOrp+w9H1kZXjjdHVT5J+W7qd2ayx7rjXPeXB+T+e/G/0P1ypBmCSZGJionGrwRMVlsh5fbvywkuViWMdsNpc0tENT9l/zKbXAPSZHwFJpenxcfnI+eenXwS9JbOiCiU3RCUwOUlr9bV/bi1EMNRNh1cC2H3Ma3YSJoFe1nvFyhWoz86rJSKjKhV6T2ForgKujeJ725+Ji2+vIW0QEgCGa5jbuQ0zd10F6jyM5lAdvO4JaB5zOmhkDdjmbkBNgLLXSAxLmsx+2dOAyIKGn4SLb7gOT1pxD44/cRhCx+OSO47BngXCUM3AisuaogaKvBxsFzZGChIgrTVh99yBuXuvgu3sgakz0hUnIznqWeDho6HSQ71Vx00zz8DXrt2Bn3vu7UDSRcIJWHt43jNSnHrKaswvKPJMYcUp8UMZWSYQ6ePu/VvxxfuPx/7sOECzgjZli9ISfkThjlia1iE7bkDjgc/hhc9gPOd5K7F6VYJaSjBcLxZeiRRkFJRaJEZRTwgm8YguQWqNnLkxfzaAL46NxRC+LweTo3+mDmjLWltai0KdiQCHZVt3k1qrlGe2fiSnbnpsTAAgR/pqyq1C3d5rMcUPk31Rv1oOqIo2mk264/tX7r7pm1/79Zk7v/XviCDwN/36n/2FedrT/jIZXve2bnde521fyIz84S/+7vs+PzlJW12QwM5itJWkSSsrXL2dUEzRm/j62yqpaY1qp7n2lwH8S3jNR5zFpqZ4enzcfnHd8zfnSfOZeb8LJeLAXIilyESC5gWZXuYqi2/dc0AAQkLds1X7hZT1IlFeX+IxKx7unoyLftCCWEbDCIhSPHTdF9C/899x0roFPO1pI1i7fgj1xv14WB/E1v65mOPjHTggfovZz6EU/n0I0zTNYWpNPPDAKlx7wwEcs4Gxc34Et+5IkXBwyDSwAZmj0P9o2H8G1Kn7LNz2VWR3fAHHrjqIpzyxhZWrGyBzN3Z178Gd+aswn5wMzToQM4yL73gajkruwPNOzWAaLuN0+4Q0ZYyOuiwjIrAafu++5Nr1Hdxj+7j8Pi7LUmjF7ywW3hEV2H134MVPB152zhqsGGUwA4lJkSZcko8pACEZiAXMXCgtixL3MgGo/+JLJiYSosk8VELJwF5rUSKqR6tKzb4gF8ZKIOS5zY9k0AwiveCCDzZnEj7akCViN0pW/wMIE/9cJJRRWqsN4d7rr8uuu+jzv9Le/r2LVJXGx6cNxoCNW9fR5ORZBwD80tv++ivHm+boS3q9bt+sWNuceWj4HQB+d/fWdQQAe3s1CodcRIjYeL8rKuTCDAwUlvt5hqS15szzfuUPnvtvRN8fGxsz09NHpre3ceuYAkCWNH5RGsOk3QXLTCYcNo3kAdRj8MYkmjeNAsD0+LR96I4/WjfbufVZ3V4Xqo5qX1G0LhYWLYwZwg/uOhYPHqyhmVqkSYId13wJ9vZ/wktfOIIzz3gKjlqfIK0TDBNU9uKUXd/D5+5sYVbXwAS5DCoDF8HQDwBTCiWLvtZx331dzB7sYzZJMJu5n5r7OboZuUZSc4Wao2QwaR0Ld14Cvv0TOONn63jhi07AUWsMksQgSQlEB3H9Q9/Hl+5Zib06CgPBAj0BV9y6Bk869gGs3aBIqQFmlynDxc9ULl0aryRcq+U4fl2CZLsik2gepgpmrsrJEXlAZh7HHJdgxaiiXsvAJgUnCsMeQvFsmuIziT2nOg3MSur1BIb5afOnfmcjgJtC11MEWbe9QHUIBa6bVSnqdC1EV3wvwUBfxR4Bfdy9suNGmwQd6tscKkLEXEraFmRKz5IzRtpz8+bO667+Vnv79y7CxERCjqpgQ4m6eeKS5LLJs/LO/IE/g2mepbkarSeK2tCZzwbSy7acmWMSaPZrdMAq2cTPapRcWURaGn3Di+iKWLRWJ1lj9dsAfH/jxik9IkaXKk0SyVve/YH1O8mco3kPArCEdQzmIku4Qa+EjWMla4sfRLvz8M/U6nZdN3NOXcVMjKqDVIaim4/i5u0tiALGMNr7dmF225fwgqcmeMlLjsaJR9dQazDIsO91DU576l480HsQX71zBZKag4FKTQCPphX8CSeAo2owtwB0Oha20Qepz37FgZXKzMlFrYBMDdI5gPZtX8FzT2ScccYGHH+MQZIqkoTAJgGUcdopD2FHZxe+ed+I6zNbI7hv99HYsfNOrNuQQCV3Iczl+gt57X6iwK40MGCkjJIGFUR1Cl9qN3AOZSRUkZg+ajWXnUzKMCbY0XtQxYMsFG81MJWAEQmpih0ekZrt2OcDuOnSSzczcJkUZKw1a9c4MrIqBILcuxaKRps+ZbkYfNkOO8YAgGaFxYoJpM5i2u77v6L2BZAmCfbv2oGDux78JlQJ27YtYmNctuVMC4B0964f5J32w1SrmVRBMMkT8s3nHBsQRqvzkouIr99VJAwZtWJCF7JuxoA2R1//1vPeumZy0tdRRwB4AMCBofWvo+bK9dZacUmbivtkcAHez6hEjbWl7nz7Gc0mgZ0s7yDHowgIQ8BsZyUenmmiZiwMGcw9fBdWtvbjec9dg3WrE5hEYUwK5jpMUodJGHXO8OyTZzBcy5DltvI+KUq3S8DZG4lalwXAyPMcNsu8jjwt0jwkospKCRlGb/c9GMFOPOs5q7BunfoAM+CUYFIGp4Rm2sGpxx1ECoucFNxI0a8dj/t35sizHFa6EO9RvWgTgBApDhNyCVvhA9xprb7fYWOcDMMkXJaFi0alVPlCpaxCPE+BgruA6T8PAPbsWa8VgjCrZSLlgDSBCLYQJo8W7wqvpyNH3Wr1vm/ygmebG/KJKnLrmANWC8KMWTiw16Kz8L1Dsks8xLZxdPbgkMFDxiRAoqJpc9Qmq48OHza7kFmraomri4HxyQoiMmqFrVjh1cccvW/DU84DgLHxaT7S3rPLzf8iTACxxspQATlldqZ5UasAyk25+UXdnwVyBF+9QWO7ovwhoG1H0EYdxA44mt+3HccfJXjqKU0MDxNqdQYlABlHC2LDULI4buQA1o5Y2PBFIsm1QulJy/ediNwNb9gFiKElqV0xt1uFYMigP7sTTzgqwxNOMmjULWopgxMGG3YcZkNgVhyzah4rhxmhocl5DbbvBNpzOay1xc+sao3ks1UgRxeASyxLrotdYKLLi4M5J8ffL/sFVSrL6IorzGARw5znApjeMyYmlP1Amgrt/26nRqpEYIKoUpFtAOT+8Ofq0BwigrWiR6o716s3nD2VVVhryy1eMKwoMuu+jngF26zfPzC3f+d2d3qnZOkkSZicnBSCdhhADhJrEvRtrVUGd9Mlei39xoPRncJ9T0WwAYBY1cYQdGTVWwHQ9NThASATE8og0le972M/a9mcbnsLUGvZFm+QRouTLouLivtZgJgTYwDgK1/5q7pq9owss/6oaCljTRjIGoyFLtAVBZImLCdg9LF+XYqhIQITg03qSlNWT+4lWDBqnKOR5AWTf5GGYizRXShsuzJKC23GKCv47WpEOiLqh9CEPtatr6FVZyTGFMpZFBm9WzBSztCsew0OqxCT4uAsoz2fQ6wvtbXqQRYCQKMe31otW5xBAqFiEV8RXv+xMEAEVZrg8FrjACv+rmCeGMozAsie/JKfecUGdyZQELPQb3QIAOWiZbkQ1hSK8HVrBVYFuWT5kWYyzM5CwjIqBtsx795IBFHWXAEyZgadB2YfcWHALUnBKmlh50MEm9s0fMhco6vsM0ohDQE/I/N7RxqafndrcV9z5dE1p73hl9/zbBDp2NijC6Zs2zRNANAVHjfNVl1ULRGRYHC71smvRYvyrvSrucrihA23Hw/WJ/b7AlUlLbqeeEbmy3liN1YRV+arKkxCGF2RIDHuZlZK/K3s/4LJ/YcFDWN8MEmBvFa8nKMeED4wVK33YWcolWv9zuNMigVLFHJwjvlfbxBMkjiFbaMFjF6UaOocOQ38ZjIIRAa5JfSz3O+O2fL5w5QnSvbqPaOp2EHwwUOlhzRTyU3UCiPfTwpJiyVTCqrgikVVEBUeA+7jGSCxAmNktSTzJwLApk1jZZA1uqkb9kY1a7hxDTHIOoFKU65q/3CrIaxB68V7dXgVJSqzTLgCmbkLoHeY+KXaoJokihy2UVwg3Uah5kAKZCLInC8rApqaq3iBZoVhQ6oiNLo+7Y8c83YAcADIo87G7Nnv/sCQTZtvELHgqDaJS7zKvlfJPOC6cZksNb2faTZNK7cibpexOlR1pW15ylTI68EHJoUgTQ2SNCnN9gLPo/CIdsEkXiCHg5JUIBJpmXWLxUkFrBveR7oXoZf22ac0pUWgxAXPafYlYRh4E5V2625KoVWTCbgRiwS1uCCqo1TpGCpZSRUqHl73wRRb7AYsoIyzqKskqmbGpSj0Oug2itI7zcnYSasJJIk9GQDWrdtdBlm90VItC6rojXAlnGXAkl/CFh2kgB3eY3S0oANZKSXKBBEHpSiQAIDt4TIuAkHIqiqRgUHarNaV4kCdokwErB8XFGuA7LeriJAKUS4WvdbK817+8gtWu9WfQwMgY1NTDAC2ueFsbgyforkVIuLK9u8h+xf3BjP6DAAmyZ9dqwt0ib43nrGFg2AFpehMYSlky23j8tqt6n0gLqm0bOmJqnM5ipnsjgEhhUIxCnPqoPVY0cXwxGNmAhuJiLdcum9iwMElFokjV/JqRdUXlRIx+FrHfZe1tthSOBQaV0gyBFcZ8q/dGn+p5IUvdtUphioG8og0RohVTGohSXbKos3oGS/tCArzMVqy0dZo3e9IH/1el4LscxHPPs7FaSR7JoT77vkIoHMSD2gTnLu9aiXIrLgbVxlLIIoo1ubVBSqElNVmko6uP5afuOH1bu/r0ABIoG/lTG9XNrCiKlKKjYbSouJOEtX4qoq+a87AjKdYyUtjhkjwxlVtXChGhX7NKQAXV/vAkoe4gyhe44NKlxSh6FamyOTPjwcgAutLLA5Vh4Yds+i8+Y+huNxCoMa5kVBZGga3TqooGocxh4Fnn2hpHSjFpUClBge8bqS4cYMEqq0iymSHuqYD5YP9Yrl6tgsgnk9JcQ0aiXA5jRAqXhmqzYBrEIw9DgDOPHO9cnGMZ2b8YXS3vausBQKFlTKaxVpYK5VS6HAfIxj1PUa54GOteA1yXwN7HXURATHJYWcyERYnvKn+wDQWgV3qmvPie/G/dwGOSE5NYUVgrWieGNihFW8fw5g5FAAy4ffFznnPR0+Bab5c8y4AsBT5AqW6L8Wr9lpRk+paYwEgV3tCnns2yMDHFBefaDHYzm1ecAODcyVzJMetqJj9xdLcJSMiliuMkFAnlwobCAlBCsDXcIOXcCl7Xfb26jNg+HemWFAHFRDHyYn7/twbS4jDoqJFSo0Re2jlz65cLIzmxSOPopX3N85MVeHXgmhXlRvQsm+FX9dZHAKuWBYRMGEDAGzBtHL1oLpvSj18b+OB3YD5teiR57K52VmIFMiKn8AHqFc91aksU4n8OT2cjKaqqlLU3FmeF9/bSKsRioFyPqelQlP44bsbLTaHU5NLrjSy8rTd5z/lhQ4AmTKLAQ9HktZG+vq0MdTMFZaIiDjSwVhkfIDCB8zT2Kjdg6gqK/J1NpeSdEaL6VTx54bMVugtVtSgaKDU1ELSzdGCwvNxVaOw6L3LZxAUuAn4EIqegxB58RzRz2KpnrTIL0zloqTH1NUrExevQstLMfhgxyx79UN/qkpARn3W4tEDDVSCRAMSOBXfNPa9qACLbDDUzRTJrnZb+CiH0XalEbG5qChEoK68IuSiyK36csstUAoUoB/CGH7Uq5J7yS5VKqBWisocqMb+j4eVMcUP0t2MD+DSbgTt2f2sYQKi5awvVKxCpZGdqKvlxS/1iarwyCquN1ef7wCQrYuUMKfHx+3miY83LDfeYm0OKFO4HRGVieFNqpg7aOAHKvf6dQAfGwLpsHWfT5VegCLv5Fg9UPJCwIb8RVJq4VNUo1Ghnhuk0oqBakAXPFASGzqE8ppRSrtJEeSoZspwECPuInkrJQ4a916fI2Q8X6MBGkY4UbR46ToOaJnqIkX7ALUUs64A4hBH6c47y0Q9ZFEe+/Uf0VKcpyjRhQpNfigXhvIFdWxRJicSCwjsmo9PbG4sqVYVyqeiHA2Jh6i4TRz/68iVrmq9hhK5PczCiiBSh2VmZ0daIFZCj2LvEVmwhpWzcJhLkKLVqJGKsBULDcotAzevhoMfvEuY3WsQy7lVJMNrXnfum959ols4LW1Nx6Zcn5ZmvFnS+qZMcwUJF2VhNMTHotsvviiZ5heMAg+3mNFUJV9WxTLYg3oUxaJfZLquEek6hrfLLFKWSTGEpqX8WZTpiycmKlZWJLD0lyiXQqPpBv/Re0tUQTnLVCcecg+x7i9xLWsYE2dioiUQPxmQGqCiTC61tah0ZopL54Il4mQOiGPvah4oa2lgGE0DWcwnLIdyDx23Ka1XgswctAwm9tQm0mivKxxCAGBjwjb3EQeZYF6sDQ1QhUbiAQeJho2AxnaOj/bcViIAA1DmgluZ1Wvufo6+nxh8qMyCFrEDlLI8t7TqmFG7+ug3A8C2beUOXQA8bFL7Va03oUpSKNMugu7L8qlqqqAgEtbEErCQWOkn8KVvpQSLeog465ds8CAtHR2GCidRF38+Ve0YFgGfEaE5ILFseBH74VDxVoX5l/j5UqyhrxX7pQJxHlT4jQ57+Rwe+R74Bga5eMUZiPT5A7ex7CcDw0OCMqsLPtIBb4ClwDM/BqM8TRpZuiiTiWhxm2OJPsABHwqxArVyxPVio9vTUJNYX5IpwowsQi9L8O+wg0zZbUw7kEacFoh/NPs1/36UA0kqNNUd84Q8Oztk8bIJdlTivgJZrfmLr371q1vT0+OuM/aAx8v/8O+flJN5pfS7gIoDk0T9nDxIoA2WFT4oSkVdkvkeA6lhsmw1H3DBpMWsJf8/68vFIAxMWkppi1iXPTUmGTiUVVQg1sZclMUVzYD4jKIKHJT2QqVuYlH9DBZ1ogOG6gG8iV1npAhsUV1kc1TMjqrUi+jnG4+IKsm1yIKLA9EjluKzlyR+lFGih+6syCH4rgPrWu6I1yyZ+qIgC8PDxUqiEU1GnLqdqKRHGmQHXBlWlMQFOyACIcKg1cPp5nAFWG2hW+tnK6aMsjzrkjsD/hAQwRIgIGFRZb/TJRya7YGrWJW7kgtGN5zS3fCMVwDQsbEpHvOARz9Jfl6aQ0N9zS1ICcIKGCGbKQdPLqqWN+SHl+WtrFAGA3MKkXJ3qcLPi9wkg/cyAUmSgCkIy3A1+4WeoyjV1NvMCpQVhnkJmVvyBSxVDpTGnFhvZh5npXhWVzDVCmDHeDcW8jZN/jBKcOH0u3EUZN1QHfSylCz/AGB5ye1YcrWwQgqiJSjnhDHSi2h0QpGa1aChoVLUay4aXMUoZYwgECDEqj1T0V1s13vOXCas/UsgCkdXgSg4YY/m0BEHmQ9kPRTaVr6nxYFIDldKnDRMotwPOc/y4vXltZRElSVkTwLYsKZJk7OsD7GZg6hVYdi4Vf248SeCiqgOrYAMr/tNAF+YnhoTEGHsgg8293DjrYkoWJiADJSmpEgJSQLb71S8tGKAIPDj1LOtGw0kAGeA5kSohZ5Kw5yLqv7HQSdERGHVg0m0RM0XkEAuBOELcRmXuYO8XOTWEg+Ti6WXyALXzzVDBhMpFXpLnp8LNqbgV20rmbAoB3Xg0A9Kt+lAxqn4RXvzPkr8ywmZRoBFXtgDSG90tMvX5MVLiSqla+noSQOXJS0qs72bZ17LOKvcX/VmS8kYH6+kRZMZ4FNfqwZmvjoLD2zcOHZEbPxcbMG6qJptVykrrmyVw89kVgotBv8mF0GWkLCIsPgSpMYG+cxBmttx1zVs+zNkEkBVDQgcJNsjZE0UINs3Nu+pjK7b/NK3/v4LsGULAYqFxshruD50St7vSQJBmg4pDux9yD5093n1rP1tajThU1NE8qX4JiTxkmPEqAG9NoBu8Acr7WWlejg0HlRTBemL4XEmihgbWul72M+lRGzlkFf60wESLRcDcK18TnGI48/3OpCL+91oJqVaZcTooS7ngQ8vCIUSlZKVZZ2iZ1tSsVaXWujwasZcRUrD/DYWMNIlPz9OFpr1qduvBFmvUyPJhVQI1iqFPiluisu0LnAOasAkthx2gNXbHQWMKLkFQFH2yTSSgPZHgUvrVDpMF0pv+yOOea5J8XkmzbVYl2Ejmgtu+9ZXv/SdD/za6bX2zC8bUSE2CnWDd4m0ICQQYIlh81x4aKWR0XW/gclJAUjnJPmdLjNEM81MCgC069YbP3DlX//Wv49y/tkGG4hfaghsFh3ghrJCCYwm5zXg1I5a9JkAZtKqXWvgFEipgVIashbQMopSPFwUUnALQeEaDRkuzA7jX1pokHhPmNLJElTu4kUzxaoar0W4NeKlToJbe4n7tyJYIiPDsuyM4PeBP0Mcz4+8dr3bcNSCtuXKWSkH157ZUZJ9fTYndq+PnBF8IctNMYHYln9f6Q/LS65Mi+L22Em6C/vT/uKeLDAdRFy28QfdLWpaV1J5pEhyOeJp9H4AbNyWb6ABlYugthiAO76kHNHCmvqZnxPotFAth9HUa1pfq6CZ1szMQzsO7Lzyc+9i5uxLk2/7V5k/+NU0abD16jQaDcWpsuqgnPe7qmufMPaK9/zfl77kvZ94Vzq69nSWvpCpEUydewceuuXA3Td8dGxsyiSQndLrAaKsg31GUfpwwc8zudQbya9l4KTDoWcjVNbpNJ71eKRDrRS9Vsh7zBShYCj6XGg5DAj9L0W9k4ZBb7lONuCbRxXwpsIOWYQCDvQ50etbNLiOBt4aASyVuSY48j6LL+hy3hizOFQUA+YyZf8Yu9AQqkwQiWaTWrp9qlZHP1XqYflNGiawJgf6Xz+2XQ2yg4UrKIhdiehmhIRoRuebay1u2bFtmw6bXlVvtNVa0UCXUSoZ3GVpgwJtdOqfqw/r+Y1frS+G2kS8pFC3SZD1s11Ab6e1lgACL8z9hfbnhT0FIkDVobcotmeJSCFka/V6p7X6q9nQyg/1VaFqGCbRmlHo3PzH92y7bH56etz2ezMP9fOuqjExZbtgnxe+XOHQJlnat4ocNGtYnTEzSdXJpOT4FKcnYVMyQAqXynAQolI8tFHBmhbVfSnmku6w2IGSBggkdKjKa/GIJOC0Ed4/SBVDQWWlUhSYqqhmgfD5nweR+z4oQjKj6rhAFJdmpmgBvkGr4Anx4OujgvJV4Kay9EYFEZx4nzV7xqenrWq0T5Y1O6ROFLQASHKf1dwuTtkoOy2JHwr3QC55cYuWzAe/dhKzCHynu2rV4a3+WxESLQtcJSkAky7Nss2FIS5Ta2rED9V1YuK/89c/+OuXSa99GSctcuJHXk9eSx5nyK7CKdRatWk9tarIsx6gopywydsHD9Leez8XTuBCu9+zUBuTWVAh/JbDZScDLTV/jvcnCQc92KhXFSe35iUiHLpGyG0W3bJBwz2S1huwlpVgiK5eZoKCvVHJL5ZFblVazCMJbv1Egu7IIjKDloReiYz2KFDLy8tDyUIKaYbgR60FQ0YX9TyOKC3ifjk1neC/5gkiBevE7WbE61tLNWgUgZg6QPgFlfPHwPxwe4dSQXzjFsA/317n8w3mJRezQslQrFJokdnCx/ww3MVetxUahrK8CP7DlS0iheqR6RuousVuhxAL4rWUPEuJDVPguiXG5EFa7lKPc5h+52+dvU+JXUmg+ERlELMCht2PnAA2CRQqCTF6M/u/ecX0/9m+eeIS4xZ1EnVG5Khka40WVrUwQSYYqGvqNHmwvDXjkiVq8GNfZ8Oeq0cRk4EKFaeicyPrryAu4Q+mitvlI7lqaUlhK1aCQg9YAiWoMlIC84WjQFKfiQZBFa4OzcuqmkpeJS1lVcduly26GIg4YlQplthSKf7MXtDJ4QCMaiNUtQJe/CS0BIeWkeW80+2TbS5/smmn53X11ZEjoAMzEF/DFjW5KzWnF3H5Dv0YajUJAhYpd5tUNOLxlYRC/6bJAebDkwBnUOjjiAhZqUlTvHHi0a4k4X4IssuclxTV9j7wVbswczuldQY5FrP4IXXpmELFgimIybHFE6d82J5F9+EdnwSA+Z13uMvMWDVsFAOl5yDVqtiMDpdCXrvXkV104L2mQrwmHByJpBO02OcKNy6V7ph+fcM186G5j1gOFa/oeBg/UKUGXzzS4hqjRSTogWFzBNKUi5rs52Z+SjPIblmCEL30tUsVhFI8nlDI2lH1v8XvF40INHiOlbxEifVGo9E1MUj5EFeQIbEGlKd3L9onqzda6hjyimp2rW70hhKHfwjfy1637tv4aq0uocTwJRn8fhRIafVhKkWJOCanekAlMfWS/FxL/L6hz8AScwEmdWxqii+6cLJt57ofd0fQ7cuSccYDhWtkrF3gdRsFKmmtQf12+/Ybv33TJQDh5AOrZDGNR+MKxBtj+gkaGcc+92UsyNyZ26Jmi85BMEmnCvlQJF5QLPe4quMgKXHw4ufu2SAVwwOqWsWiOi8EqFza9ATf8N5VCZFV6tfi5f1yKTPsumERS2QgV8Rwfzxs58xlacoiUMe60RPTI/OGtOR7ugouyrjRaw2rvURabIyUl5MUrH0VcK9LMGTuBJxiFQ/uGZC3pJGw/hFM1AqEh3wQ6BGHWbJSGECSu1UZKhHNiCRekEQJImBrLR+u7hx5DTstl59dkOV9AoXph1MmxhILl2T3/6O05/YZbhjAqCtBGIYTv1XlbrBQl/vdN2XDkG73s9h5UXts6rMmMPXzvJAkKosLIoAVQurVeglh2zBB0nGj1eTeToeUgVIWtzLjijQFIWDWoslXKilXUuHXUcQYKQF/Jq64Bpc2tNVDXQAkfpu5MEhfgr8XS6+R+nEMoZDmKVeaI8ZPaFWCdWwwS5doZYa5yt8cmKEFZQ8vR1KK42hFey/eSy1+UxQEpJX3qiIER1qWwEEKgcowVCE1CVG/x508T+8FgLGt0T7ZQruroip5UA8ObbbNiyXKyAACZI58abPfq1FxGKSES2OuXPF7Z5DAOnLs4QWZlHeg0yaX4vXZLKNQDiGktPgxOSkTE8rf+dDv7UxFPpukSeiAi9WLoN8kvl9VUUje18QYk80ebC/s2PaZELCTBdXLj+607Ou0shzob0JREmshXG8DQFuPvldsui9J2DtnadGQq7eCVRHf2DswIgBIoZ9m5ggUF+9f5j2YVXzlyBCr0WpHdUcsHGqiRQN0p0x1qDanMFkvkcqw+hLvwlVJwuF5w+FF6fUcVKzDlkRlzuiEsFWN83uO9vQQj+FEoxJbKkNrP/0r2COqA7oglUE0FdvZxcVLwZtaNE0YKubem+5b+YA7W9CoXOy6JWxfsrl+gyP+GSKDA4Xk9shXXeoNVbUFAVRVUTnvVGWAiOgRergXjDMvRBCG0anKgNDl4GPbtmkCQDXtfEJ7C7kJr2yQUBrbWYElTeuw8wcvvuVf/+a2sCFdfF311HIa3Duq2AdpWGvKrFNl/vq//a+drMmtaU0A5BJKRDfGk0p2cWskid+iLqH5MjCi7eViuCwgtWBWGEZhLxDPjJamrgYo2y9FUnWN5BH2aZEwg8FLzq3KgTbAnHgd6VJGlJZYsqy8J2HMQaVKFtOhX9dg30fRwJ8Yi96rMrgChcuWX6tSi4omiYFhvvVd7/paz8tilkG2NyrTSNWPItT7VJGnLqofFgNKZHDEinA74KiDnq4VkKqQq22h70fibsKk1aiZwxF1FHVS2CUTxnAlkxX8OoYEzDcuGafHLVTxfL7/Oun0L6vVarAQW656hNrdlTjEDBCT9rroz+z+VLwhXVTfJik6/2pZ5Q4rR6ilKgF5SKwkCnO1SQzAouJNz0tFKK8zEcjjHlBgZhhPAJWgoq6RClWx0sFhMcxvQ5SVi+hgxxztrPkehJmKstzpqVBh4lFSvziSlStJ3yAuX0M04A11iFUbGI6FNoojm1JFvyRg7kQet3e9rIeGw3stUfYclHfzz12gkdbhDE4lbYAEvFjLw51S6+X9nC2VcyRKAKldCwBOpjsGPhaGnOR6WJmIZccGVZVcHX/Eg7K03nDFikvXpQ89R/qO0bReoYnNUnNYi5vlTqGLV2uLjNJqtYpm3lqBFZsEt1MMSGxPTk4KsrlPWGvJaR07rfpCaZbZZ3gVU6tzb3bP3fO3fv9rzihivIKEZnlbJV70HaBTRdW8Ay8MIi3L0Sv7/RQqOYetYV06efstbir6xKBQrMV7OKhzj4hBX5U3W3zLR32Jr+KC5osPS793Fa+9oKr1MVixRDthDjwqFcpEStAlrB0VSsWFSvBgAOnAAmeU1WNNlbL1XCRLXvWOfoRjVuGfVoOOILywoOh0kmuWlOmuNzteJGNxSi1wguAhpgKot07askWPJMisqFq/blIMnxGxjMLtzgyIUKOR8mHqLhaMB3V8reJ76WWZErEWz30IKur0uBPKGZ7d/eVe+8B2Ywx7EnpF35289lctSYDu3Oduv/KLc2NTU2bwObPcKntqQdj6pUWaKcWelEpW0jrmZ4eubc/TbJowB3OvWH8xTuSGTaTGHOl6E0XbzQN9VyEXTkUNvFjLRUNTWVlsNWz8aAPlzhtVl0HjzE2gYm+twlgPJIfwfhOD2USgAhX0VaaywSK/bUkhk3mngSAiFL6vkv66pBV7GXQVbUYMbIYf4rM1YtZ4aaF6WqN+Dw8+eF/7Oq9u5pUG/fP0hEX8tpig0KT3qzHwvEUPWLiJfMNf7YcdZPVuT4WgTJFvlNdytN58x2oBBoA4MdZLVwNb6FBLLv7/DdgRfPuSQ7TaM0ohb8Ag5hxLiiiSjk1NmS//3R8dgJV/rRn2gky2kGRzAA2UGZzP7c2yfQ9OObukxfNCIxB1p9SVIWSw5AyfCCAhRsZO0mDMPPeMD+/QvH5DLTFgtkIBwCDrs6pfblRGZm0hqw3lCO53lZRdSrKAAEWKzA9heYlqISbKF7uGxt86ES0rVosaJEKH0YLlOvLgqEKxrFopF+CMJlPkalzHq4BIDtWseHLvJF4yMDQSLC285zKvphWRlqnwtK/Ms4vNGKuFuQotsZW9VE/nglMKaaJaLVWI+e4vXXDjQdWJwDvAooMoFQmz6j6qj3ryQ9lWuSH3KEz58K8H7slEpRuXFY51wN4Sx7jg9v1PWmsODw0dvdptIR/6mScmJmqqNCJiYUwCWAX1835Bq+rnKqpqtSj5dKlN+9hbjPvyT+j3+4lhdu+sRhLbEKR15J25K6779AdugCot5ZstnFpH9opKtIjhrzG0ToBVR0LcCBgiUuXWpcak/voJ1kQR+EGBt2kiTQ2KyrSQ5SkoAvr30Jk8dGUlevmQ40hisXL0onmvl5oL/R8PDJBjyDtGJZUNTHMDLJKopNQyeH3ZapDAyiqoJiDNHW3M5iDKii5agyx28XU5WptyIwaN1ni8VnHFQUejQxt2yNiX2FRJtXpIsKSUrggltyFrQb1+8lUPpdGiYXRr/6xKZCIRyzMHmlEwTlAiIOH6RmeHe9iWE71eT1SRF70EpND1cDtkPggUpFA7vPaodOSYY58HQDcvtVc2MUGYmODr28evzRjHOq6nEnU72mR0ioyS1FREVNV9PfsICwTBKum7H3z7ddTrXJrUmq6VrkDwGSHPSWf2TwGQYJe0aPie5e4iZfLQuy21+2KmOAiqDLFuc+CYA6v8DXj0xe2FuhL6LAM9hpvhaUn2lXJ9BYOD6MqhITfj5hp2LByFfTOMhKkQrsIAXF8KkXquqecuUhjrkA7oWEqkY+LXaKQHHjkKB+1aBO/IUm7CSwaIQY4Eu7vr0O77lRekMP151DQDJ6aUgkOsIEUVQMVdJAYCLkwMlyQ1VyTTuSIaVdLouBTcXeICipggmpqE5+bMgc5C65u++ZBFQfbw6P6Q+0qHkzBXiLUpyGWceqO1Yvh5z2s8knT14KN9zTXCbPKgr6iBQSAOkIhzi81zopEW1j3pqb/+ghe8oHnZ5GQ+MXFJotHi0xg2JZiclG6SvE7rjZU2z63kwv35A9RM8HDxZAsLTtut/IHRI2XfEDSa2U+Q07kglNw8raU1ltk9u+d23PqFuJcbfLDJVSlMo2POYqkoHGTaGAQ27qx/a9XLBACyh196bZ417qrXQaBcKFJALBTNSGEK4d+ImKvei0PYl5BerAgEphyZnoTrtz8Rc13AUHVgW2oTcpEBXR2WgX1JHrbYYAmhIi7W/wf4uJQLtHkMdufPxoGDBJHczbbg/c6Ewcgxl5+Am3Ych72zPWfRRALu3YPVoxlqqSmDoTK7GhDfCcaAURlbEoS1SlGLOAuO9KuL1IR0YJ1naYBIpF4nkNS+cd6brnzIi3PpoiAb2bXaWW8EEf4ImKBoTcFay0qqzaOOP9ac+LznAKTnf+QjyeEsV05t25ZlarpgLlg+bu7CkeKtuMUvgPtiJVl73DNPeNk7P37B2AXNycmzcqKSFj09Od5/zR9cuKnfGP7vaq0SAbY9xws77z3QwMFLwtftpDVlMm5hUBWa2xoAc6gkHIJmxPYuyudm7ldO2LorHMRGKG1C2vPT277yyV0T5SYkDu2hZsqfYVW2zpfhBFWVGrl19Y1bt6pOjZnnvPa1bdWV/1ZLhks7h4KYaL0IkCfaerYEVCB5jizvAZyDqAtGDlAGRoZGwuD6E3Htjs247DYCJ4AFV4QvilaBTCmRRwm0PQsmi8QYKPruZ0l5RCwvWTGIRHasdxPdPXQmrtrxdHT7BnXqIjUZkjTDcD1Bzk/BVTvOwPfuYcBaGErA2QKac7fj6PVAs5F6ICNCFctJc+FAQz7bKyVFT+Y3kEtzCXUzIvKiuohlBCiy1orQ2sEdsqrZISjLEqDX+LQ3qavEQlLExvQ2q89+Zp8DfdRaP57gSmQzCEKq6VHH8GqW/7V589jZF77znfPBn8vZB41h99ZLCQDWb9qjG7du1UlsIZokebFkuwgkoXMV1UXxGeBRypm7iYhZeczP73/uqpPfs/nlf7lmJLmCsoUD7YNc39prv2xWkj83teGj+llbGvWazmy/hzo77nn/7bdetmPz5onksssmc8n6BCa/sQqA0QSQApodCkxxpu7jcy9678enGcO/LxJ6bOKsM2vt3L5PA6Bt49OHvFyMJgbeh1u0qjdIhKr2HxfkO0wC2DK20W1+6bGfmJvf99vMnbpYCuK11bJULHIHQMKwIssTtPOV6PNqGG5AzRAIKfo6ggPzJ+P6B56Cb97cRMfmqFECq5kT+ykMmajULiQDgkUiCtPZgcZKCwbQSuZQkzkoVsOIwpIF1GAp03nXCmTQZB2+8/ArMf+DrXjppl3YsFIhtRXY2z4B37/vifj+PS3MtntgwwAz8gdvwKreHTjh2JVIagZEecnUH9RdpLLfStADJPPjM61so1f202JfNVV36Xuq1KK+NLZqqiwLiNRrNVpYMHfM7cwuBgCMT8tAkLmieJrIvgK/cMDx31gZkRk7c9nHEMCinJHV+lEnvuDk177py2e84efe90Ld/f1z30WHtDnaPHFmchkg9X7vi4b4NX0ggwPpHDhNVS4pgYAEEAHPoStZ0nzuApJ/3jGTH+xkyf5+njUpXXF0xgD1u1JvNATtdrLvjhs/v/3WS/8CExN8GSC4DJVdKuOGwPxo2iEFWtiZ+ZTWG79j0npqwTZpDJl8zwPXX/MPE9dAFdNLWUht2aKYnMRI3XYOEjKKB7uRDHQx13I3bTsTmS0vmklxCNXktuuvfvOXRlfOj83NL1iAzWADbpxxI4wBeiJY/5w3YMfwWfj4za7PpcSAOEUnb2LPbBPz84ClHDWjyDQvwAGhAbk2//+G65CFXRjqb8OJR6fgBuGYFfvx9PV34Rv3Pxv1JiN43qhEoqjFHptT82XpwtZX46pdp+HGvQsYHVKA6pjPm+h2GIqu82Y2hLS7G70HvoKTTuxj1Zo1IM4dMEFB7YoWaXoAFqyEmgIGB6Fy/KFtMQtSAFxa0QxuUVaqEniqi+hiA4WKpknCyPjjr33ndW2dGjPkHDYrQYax6WmeBqzt57fxEDarZgpOXCNIZZ1viHwmA4wqtbOeUG3FGWRal3+rsWHrez/57Vv7eb6TkMwv9Hv9vtUuBHtGOu3L/897z7oTExO8atvuT+9Lam9M1xxzTt6etR7dYfiF0WCaUKBwRCAwL/R7MtvrIOFkJTGvFE5BeS6iIkm9xjXR5MEbr/7K3d/95tsLyEgVmHRMQslyUJpDTeqpO4/8mJycdAAI0U1n/bdPflvrK18hvb5lFdM7uO8iAPnY9LSZDpykwbVbVXo+0b6v/fEn7kR9dC1yEgJM6Bqs1zFhFUmMJfTzBw7uv+ch/8XVsVAcQrUwO/SXaTL0c0wLbJXd2krg4rEizzNAnFWSUYXyMPYsDGPXrDfvUMddZFUYymES9z46dStxfVrRJ4ZbXh3KZzPUGin6D30XGxq7cdJJR6PRIBjM4NyfvRO37BjBzoWT0WjW/TKmKxvLTW5yJZwCCgOQIq0l6OsoHp53sZEai9QocnVKaA0A+d0X4djWfXj6M9ZiqGVhAlVKaZEcA/smI5SpuXaxYWg3Us6wkAMpWYASTyeLbZ5zKCVI+m2k/d1IakkhtQfoorlmdfVLACJJTcKzc7RnoV3/BADasnVal/CPATDtfxyd/pTJcjImNQTkUBX1ewxMobJVVXEcfQbRbKdrt7et3tGWTbct4I1395PfvquHP9ohtYmHtPZnO7X+0Z25Xv67Ex95Fia36NTU73W7268ds/t3fTRNUpM2WwYMslArYq1fvXabbVKuzjOIa5w47bK8n3NmM7BwPTUJzxzgPTd87yM3fv5/vwG0Z74iHQRA+pSrIIdABFYMJFmx4oT0cE3Wm7n9e7UCMHH3wO7+3vtuvihm7x/qcycBSbudvyEGqTFMQjmcW5ESSFXUQqA1w5x0Zj6xbXq6Hw+1x8enreoEv+jsC7/Xbdf/bbjVJBa1HK2nEBEMJS5DF/HdR0J91JM+6qmgmSqaqaKeWhhTrX2cGV8VSoACbB2/rV5rIHvoGuh9X8HGJw5j7foUaSqwsDh65H789ktvwBOHb4f2+kio5hboKQP5UQNFA+oCsSPHmawlQJoo1AiEFUlaR8POA7f9I47B5Thr8yo88Qk1NBvWe1UbBKQWZAsenhSoquMU5raHJ6+5G5tWb4eKgWECyCK2kRcoOM9RMwbp/luwtv4QVq1qVdaTFsP2GOCfqtabhqyt/f2rx6/ZNTU1xpOTi13FOPD2JiYm+Bt/9pZLsH/PllSVao3hJKk1OKk1yJiUDKdEJiFlQ5SkBDZEJqFaPTVcS6kjFrO9HubbPcx1uuh0++j1c3SIMWvpqG233HI2QPqcd16YXPkPH5i7eGLsHZh96HX19oHL6jaztXrLJLWWYVNjJUOFN4OjS1oLiHXGypymzWSoUU9r7VnN7tv27X1Xff3ca/75f/4aiLrRz7HQ+Wpt//oMk+xNmyNs2LDtzLaY5x51GdTRpJSG7rr5qzq376bm8GhCs3uv3/6NT96gqhQyziE+12Jigr/7//36Z2r7d/xJi3LQ0FCCpMbEhtiklNSbplmvJ7Jv1z9t2PGdv8bEBA9Ss4pZX978nwfnuM/cJ1GrcTnmOI7G39YJwCmUUggSAO7vFAbKKdSkUDaAMSCT+M8zoOhXkiSg2jAaKcPu+C7ym/4BTz2+j00bV6KeCJgSsEmRSR9POvpe/N7Lrsbm4y7BUOdOUKfjsgXXCjbHoGh2sTLFCSipIeEG0v48ZPt3YK/9azwhvRwvO2MFNj6lidERIKknIFN63wYmh0MnjRPYIfVyfhZKhKHafow982o8uX4net0MjMRpMxIDxoBNAq41wLuuQfLA5/G0JyVYtapR4ftSPDuLZMF9OaxJwjw3k+7tL6R/owraukQWWzxEdlpceu5//cQZZnTVuKg8X8DHSN5vQdUUPV/YBSNVkFH1uDqIpZDrICNkjDVW9s3fesPNnZuvmLjmpovvKBh3E1soMNZf/e6/fW7WHHkZkvSFwryR2BwlJh2itBboVY6Wk+fQbnsWkm/ThYVvLdxz20VXf/Gvrg6gy+QkLdr4m5iY4MnJSXnF+z59rrRW/El/4SDN3HP9P1z/mQ/+re9iH3HQ559XXvaevzs3T5t/vnDfXX90zT//z4vC8x6OLgKI9GUX/O3m3vDqX80EzwFhrdq8bwjb6ln7Hy/5wDs/FRPCFz/FBBNNytXffflH166d+5WD8x3LysYqIU0Y22eeig9cdDIO9FYhQcOpA2swUSePYpaqeBoZKBScTI1cNzUHd/cAD38PzYNX49RTEjzr2Wtw/DGMoSFCvQGYhGE8OThhYL6juPnOOq6+dR3uPrAB83w8pLYGWhsFTN3LNJBvPwScCbQ3D1nYBT54J2jvD7CKt+NpJyfY+MxhnHBcA8NNoFY3IAMYI34QXi6lOulP31pT5vspA2EHjybEeGD3Wnzu+8fhzj0no0MrkXMLgKCWHQTtuxH1vd/Es08Bnvv8FVi3VtFqAWktpvcVDXQhrsqOa2pHR2tmbl9ryxmvuGVyagpmfHyJ1mFJ2D1a11CAXvbW31yt3VqjY3uJpCk1ANiMuNky2s9yTWsqvX6inGSa2oa00YYxqaZWpEWrbP6ZybmvHcL3eWxsykxP/7yNz9Vb3vLuofmjTjgqrzeONlRby4ohwKLX7XWkM7e7t2v7A5f864fvjzvPsTe+0UxPT9vDGNXxGEBL9lGPPk1XADUA/SNeCY9+ppvf9raGWfGUFcnC3uwbH/vL/dHT06FY0KoTDEzqVZf+/ImtoZ3Xm9r8aD/zYnHESLiFBx5OcdnVe3H3vQvodhxr33iMhH2JFRSjQtmW++qcgoum19Rn7WIo7WD1SB8nPWEUJ508gtUrgFqiMKkBGweGsRpPNwsWTsDMrOL+3YKHdike2tPEnvkhzPaaaHcZWe5kXtn2UdM2anQAo+lBrB3uY/3aFMef0MCadQYjQ4xaSkhSQpIYT4WzJYOkGLLzgLONlEEorrNIU4v5dh033ZHg1jsFD+2x6LYztHQO60cO4qSTR3D8ScNYMSpoNHLUEleWFhmrop8fllVFajVQ1m3cj131Z73oTTcfrBB6HjXI/OHHmC95fhwPd8j0UIdoYmKCt23aRNNbxxSTh2H4ToSxz37WbNy6VQ8rm0QZbfD3OAKlngBoPFr2O+SF4urImClLY+PT7A0sHvE5p6bGzPj4tL3qu+f88ZrVnf81v9CxSmSCslTCGdpzbezZ20O7k8PmtpSXZvKSSerlAyIxgMByEi1RTyIkaYJ6jVBvKOopoZYaR98ywektjeS9w6zPzalyscj6grkFxcxcjoX5Phbm+uj1BKJuO6BeM2g1EzSH6xgaNmjVgVriJjtpDd7E3RN9aYDAW5xcLsjEBX+Syz7ezbocJS3PCXNzGQ4czNDrOoZIswU0GoxaTVBLDJLUubcUGXORpbKD962qbTVapjPbfPvmc274ZHhvHo1VeOh/V4WTpD6Mx1KMfKLDMxiL+PQTE1to27ZNhLHBRscL9zxCwB4Wv+uH+9xDlnNH/BwF7+3wgzXQ9b7xjbc0V4/u+v7wUGdju9cTgFhVweIo1r3cQm0paEoo6Vfh1YsX2CQeEBot5k3iNVbcGr/x6z3EoYRyZF54ahcVcnXi12UVaq13AAoygqVtcTBqdINrx6QmdkyUwg+bnWQ6LcE/D94BNLC17DT+qy41YWatNnfe1bkiz72UvzevT41fRjXq+O5cvtUOzYzNV8UOtZpm9kD9kr3/8LSzx6Y2KtEjn0fC8uMx8wg35rVXnHNOo9H5ao55UXGKIQhcvUJ1ipagSmnhFUbRlntprCdL7GaV1q5B4BNLepm5LYVo76WUsNbS3y5IDBT0d8/0GbSIInL8yFLYtcxWgSIWNDdUvUsMBCyAehY/SCJZvXL7WWwkCqW2uDxKcCPasxPv/cYCIVFDibLWOshGXnja2dfd7ClUj1gV8fLRfew8xsen7dTUmHnO6V//eruDC4dbqVFVAQU1Yj974wTMxv9ikDF+zcftgYXFUzCBE78bRuRVsxzyZowpfjGbgtVe7mRI4ZxZyvhxKc8Q9X7MKPa7mAkmIZiEkSQMk4jr8ciAKPEIZ1LRziigc8sQmwBqvFZiApWkZJqo9fqgBqqJC5CKRxl7Tmm5yhbKUqrI4yHaHSztbw0gQ62E+/30T087+7qbp6bGzKMF2HImeww+VEFbADrz0teNjjR3XzU01D+l3RVhYnb7br591NJ9MnZTCcAB+Su4WBuVIPbjVX5VFst0gypy4bEPtkaLm1XRnUizMxrqBss2jahPpYhryADsyMSBThIoaSZMMNiVvsUakFe+0tSbaxQatpFrULgkTPT9aNXiFwG65+j15XZkJDVzs61LW3fVX37PqutkbKxQsV8OssdfoDlI/6rvvOwFzaG5S1jzWmYLW0CHuhWS5bJIsaPQ+IiHs1Su8petWqRWrB5kqBwZGfCZo0U62KrxSK8aqKHMK64DzwwhCv0eFxlTABCX/kkUXqkGWlQJtZNfCg4lcvkSS8dRilZmBnX7ieIF1wSiImkqBG3sX5irn3b2q26643DKxOVy8TH8cLzGMfOCF3/rqu588731Zp2ZrXWHPqkIcsROK7GrZzkzK9CYIAw8kMAiYOEwVQCrTrOE0kph0J42NpwffBJBSQulRRm13NrWaHsbi7QgdUDSTg+hpnVoqYFcE5NLmrSoN9/43bNfddMdh1smLmeyx0GsqY4x0bS96ooXfXrt6v6bZmb7uRAnLJHmRgxgBoZ58MkOMhAVNV0p4QWqupoExdzSKUUWuZ+E1RNHRQ3BaUtFTKFiXYWQej0WcShipNsP79cd9u2cfICNYD4BUbk3FgwnQmC52aBCyUYiQnYgytz3FYwrlpQIJ+QjrUYyM1P/izPPvvk9qmOGaPqIRlvLmewxXDUC0zIxAc73rP612YO17w8PJQnE2kKHq0AMbVXeTG0hZ1aakVEkKGMLkc9QLrryyxaeaDFaVzXoK4O5QqOK5N8Ks0J12Yp4sMikUh42KAqX2wooJKKD5/jgImZh5icOgtelMnRczlLhFa6xA45KPjyUJDOzjS9rsvqPHBd5+oidVpaD7DFdNkK3bJnAi8774lynPTq+sFC7d6hFBkrWZZtYJE+rFZ8OlmyxywkVPEaAC+HREBw0oG9/qBWSMvC4EPaJ0UhEIjdVZ1euancg8qdeND4oZQwWr77okisrizalIw8A9aWqaG4brVrSnm9+X+dWveWssy7Lt2w5NKtjuVzET8f87IpvvvSZQyvnvp7WsnXdHiycoL9PVhKbcxTNPlHk91ycn+iQq3iULmxDcCmnHkm0ERHEVnsqaNX5sgAV1BYgikRlGmlVX1+jjWcUC+hutuVcphTEFkHyIFbC0GLEUDVlL+d/FC3OhizuM7+wrQ/BdLtDd8w83Dr7tePXbT8SoGM5k+HxOT/TqTFz+tkXX7+wb+V5Nm8caNRSo0qWliS6UKSPuNS1K0XJGNSYqmv/lf3TR+bQ0MDXjb0vFonbELRiBhHv1sZfjUpznXjYvMhnL85qsii3aHwhFIpXZJstNlmndX/eHnrta8ev2z41BfPDBthykD2eSsfxaXvJJZuT01/xjSvnZ+qvz/vmYKOeG9XcEpO33AsCFtZrhMS6+k6LRILAjVaPCXn3NPViosX2YwAmBvSUVLi0zoUUmdFljaR0K1CvFq9cYZiUbDyvXEVcCO+AXUUMdjQuUa9SBS008Ym13D4v5nPWa9kH76pyQRMwEGtss8mm12vetzA3/OqXvvLa212VgB+Jw7scZI+jx1lnXZZfcsnm5LSXXHrZ/FzjVXm//nBrKDEiPUuRgSPTYji+8kc1nk3BkV1CpAZKA6jlIbQJY/3FYpDsg8bLMhUL7KWjjBzCBNAW6sCPMqxfrOdRUZniyCE0+EAbQHv58DBMvzt829yBVa845zXX3vJoxN/lIPspD7TTX3rJlbN7R17e7dbvGB5hw8p5AD80MuBbOjgUwc2tagKpVZ15VLUIgz5h+NhY3rschavXi0bkLRrb10a+ZZXgtxWUtEAdabDnQ+GlV1GYoqojaGlNxgA0HxlpJJ2F4WvmDxz78leed+XtP64AWwY+8Hhmhbh5ziVf2XzcyKruP42MZptnFzIrSswq5GB8LulMHlgofdwI7PfRROxidSioW1/UIFLkSzXlEogoeiGq9IXkgyXgEU76HQPSazFbxSOQhdNoGFTTItTQhU/qCcN5bFwUO0U6fmNOSkQ6sjLhhbnWl7vb17zt7LddvO/HGWDLmexxDe87MvFZ5162454rT3jlwdn0I61Gw9RYCQqr4a0PwcCB55d7f+nc/T74WaHMTrFwaVWlXSIpcV0kO7BoGlawsGgJdV94Q8DSFNzLYfnPMY7NXwkiGiCmLG3gp8qAJZsmRPV6nWf2Nf8qv3TFeWe/7eJ9quAfZ4AtZ7Kfhow2ASYv7nLFt1/0G81W988bzWx4vpPnXoDM5Qy13h+7dHkpD3+E44X1FeLC9ywoDAdXlWI2FviGShCJg2opSJP8aEGjPo2r4AwBojlIyywbB73T3Y8Iv1pyEyMEUwFIs1Ez/R5me530gpeee9M/EAH//b9jSSGc5SBbfhwWc396Gjw+DnvpV8547vDK7t+2RrPnLrS7EKvWTZ2lYJ1XPc2CPJwObKwOahOWH1+a5kWGDFqqLGjISLHNk1YtjFyPR0UXF3bOgkBhMOpTFc/m9yAN24i47HTPSQ2ILVTVGhjTbDYwv2Cuah9s/eYr33DVD6amYA6XUb9cLi4/DskMGR+H1akxc+a5l19z3c32zNn9zT9RaXRbrcSQiJAWbg5+jqUlXF84ttCivqxg89MAg2JgiKYBMKmAHB7S1xJTrLDhOQhelQwSUjdOkKB4FfV/VDiuk9/cJpBaQHOBqB1uNgxQ78weSCa/fXm+OQTY+Djsf1SALWeyn+I1GQD41tde8LzWUPfPRobpJVYEvV7fqhqvglbdQwtlnqDq2czMixw7HbpnBzKdDtCtEHEaw2GUqs4DVdNxCaZQZFnk0X2ObXML80oFILV6apK0gfa8ubg3X/vDl593zbVBdvJHGTIvB9ny41H0QhyDH1D6zrdf+Iv1mvzXodHsyb1eH3kG68UKWP0YO2jGa8hSS7ibhAXNcgg8OLciPxrIywF28MBWRBvX5VayLmXEDh3Qstci0/rXIIDVpMamVk8xv2DuzjqNPz373Os/DkB99pIfg17LcpAtPx412JjYJadvTj17RXO9eWdq7O8Mj+LYftZDt6dWVcgQsXhGBWvcd2mV6hQge1KocMXfIOYuaoD1NfZ8q6KOZZaTRWtsg/r0RdYVV4+mNTZp3aA9n+zMMvPhXXfjb9/8Gzcf+M/MXstBtvzAUgRjALhoavNRK9b0fzVNs18dGs5PtJqj3c3dSqQaImKmYDwIWYJX6Ps4pYqPdFHqlQvMRT2oj+CGXuzE6VJ69ApnB+C8mWoNpoRSLLT1gW6n9rGDe+ofGf+la3ZF3+N/WvZaDrLlx9Il5PQYB0eSqb/fuHrdiUPjaV3entT6zx9qCfo9IMtUtLCoFCLyfjnxKgsNrpVg8e6zljtsS9GzSrtYqRB+Q84KFp1pzXCzmaDdUXQWkuvznvnEzL38mfF33bAnBNfY2LT8RwIby0G2/PiRgm0C4M1fecGL03pn3KT6qkYDJ9bqgizL0M8sRNSKVzclNaSkRGQjZZ1y0hU2trhi/F5uUyNQrRR+aTQgMM7gxPd/ppYapCkjtwkWFvCwleSivJNMfX4Sl1x43XXZT0pwLQfZ8uMIwBH3+MLHN69ctaH3YlPPXkGme6YxdMrQiBjiHFmPkOWAzUXdWNnLWsM53Wk0hqLISB3xCo0bM6uoc1YmJWJiTlJ2drbMaM+nyDK5zwouy/r1L+/dmVz+pndcXVgX69SYwU9IcC0H2fLjsM/I1NQYA25vLfzlX/32K+pPfcns09J6/3lJPTtNOXsmWJ/QqNFILQ3IokA1R+6VhEvlKK4ucQazUUNIEvYs/RR5brHQpkxAO2D5FpvxFbadfLdzsH7Teb965VzcU/rX9/+k51oOsuXHj5k5sjjgAOD8Zz87fdm7suNGRvWJhulJCeMUUzMnguUoVbsekBVg1Jk0FVgmcnYzqmRVuS9CHYI5YIh2a46HbE/usOBtWS+59d6tnXt/a3LbfBWsgQHGMPYTlrWWg2z58WMuJ0HAGE1PT+ORFhs/8O6fGUqPnxte3RppmbRbNyZPmFMSyTTrp1nbms6+fbKw8/J8/q+/dlfvUOOGSy/dzHv2rNfHQmAtP5Yf/yEX9sQEeGoKRnXMTE2NGW/kecTBqzrBxXNMOKfdx/QPZvlsLD/+4/Uh4U1/3HnbsgWREVDxX30kj6/H8uP/B49KAu8M6xMIAAAAAElFTkSuQmCC" alt="לומדות">
+  <small>המדריך המלא, צעד אחרי צעד</small>
+  <h1>מגיליון לאתר <span class="mark">שכותב לגיליון</span></h1>
+  <p>כל מה שעשינו במפגש, לפי הסדר. כל צעד כתוב בשורה אחת, ומתחתיו הסבר מלא שנפתח בלחיצה, למי שעושה את זה בפעם הראשונה. מסמנים "עשיתי" ומתקדמים.</p>
+</header>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="progress">
+      <div class="track"><div class="fill" id="fill"></div></div>
+      <div class="count" id="count">0 מתוך 0</div>
+    </div>
+    <nav class="chips" id="chips">
+      <a href="#start">לפני שמתחילים</a>
+      <a href="#a">א. הקטלוג והגיליון</a>
+      <a href="#b">ב. טופס הרשמה</a>
+      <a href="#c">ג. דף למידה וחזרה</a>
+      <a href="#help">כשנתקעים</a>
+      <a href="#words">מילון</a>
+    </nav>
+  </div>
+</div>
+
+<main>
+
+<!-- ================= before ================= -->
+<section class="part" id="start">
+  <div class="part-head">
+    <span class="tag">לפני שמתחילים</span>
+    <h2>התמונה הגדולה, בדקה אחת</h2>
+    <p>יש שלושה חלקים, וכל המדריך הוא בעצם לחבר ביניהם:</p>
+    <div class="flow">
+      <div class="node"><b>האתר</b><span>הקטלוג או דף הלמידה. קובץ אחד בשם index.html</span></div>
+      <div class="arrow">&#8596;</div>
+      <div class="node"><b>הסקריפט</b><span>קוד קטן שיושב בתוך הגיליון, ומקבל מהאתר מידע</span></div>
+      <div class="arrow">&#8596;</div>
+      <div class="node"><b>הגיליון</b><span>גוגל שיטס. שם הכל נשמר, ושם אתם עובדים</span></div>
+    </div>
+    <table class="two">
+      <tr><th>מה קורה</th><th>מה מחבר</th><th>מה נותנים לבינה</th></tr>
+      <tr><td><b>האתר קורא</b> מהגיליון (פריטים, שאלות)</td><td>שיתוף הגיליון לצפייה</td><td>הקישור לגיליון</td></tr>
+      <tr><td><b>האתר כותב</b> לגיליון (הרשמות, תשובות)</td><td>הסקריפט, אחרי פריסה</td><td>קישור ה-URL עם הסיומת <bdi>/exec</bdi></td></tr>
+    </table>
+    <div class="need">
+      <div><b>חשבון גוגל</b>אותו חשבון לכל אורך הדרך</div>
+      <div><b>דפדפן כרום</b>במחשב, לא בטלפון</div>
+      <div><b>כלי בינה</b>ChatGPT, Gemini או Claude</div>
+    </div>
+    <div class="tools">
+      <button class="tool" id="openAll" type="button">לפתוח את כל ההסברים</button>
+      <button class="tool" id="reset" type="button">לאפס את הסימונים</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= part A ================= -->
+<section class="part" id="a">
+  <div class="part-head">
+    <span class="tag">חלק א'</span>
+    <h2>הקטלוג <span class="mark">מתחבר לגיליון</span></h2>
+    <p>בסוף החלק הזה: קטלוג שמציג את מה שכתוב בגיליון שלכם. מוסיפים שורה בגיליון, והיא מופיעה באתר.</p>
+    <div class="meta">5 צעדים · כ-10 דקות</div>
+  </div>
+
+  <article class="step" data-id="a1">
+    <div class="step-top">
+      <div class="num"><span>1</span></div>
+      <div class="step-txt"><h3>יוצרים עותק של הגיליון לדוגמה</h3><p class="short">לוחצים על הכפתור, ואז על "יצירת עותק".</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <a class="cta" data-href="SHEET_COPY" target="_blank" rel="noopener">הגיליון להעתקה</a>
+      <details><summary>הסבר מלא <span class="hint">פעם ראשונה? לחצו כאן</span></summary><div class="more">
+        <ol>
+          <li>לוחצים על הכפתור הכתום. נפתחת לשונית חדשה של גוגל עם השאלה <span class="q">"ליצור עותק של המסמך?"</span></li>
+          <li>אם גוגל מבקש להתחבר, מתחברים לחשבון הגוגל שלכם.</li>
+          <li>לוחצים על הכפתור הכחול <span class="q">"יצירת עותק"</span>.</li>
+          <li>נפתח גיליון חדש. הוא שלכם, ונשמר אוטומטית בגוגל דרייב שלכם.</li>
+        </ol>
+        <div class="why"><b>למה עותק?</b> כי בגיליון המקורי אי אפשר לשנות כלום. בעותק אתם הבעלים, ומותר לכם הכל.</div>
+        <div class="ok"><b>הצלחתם אם:</b> בראש הדף כתוב "עותק של..." ואתם יכולים לכתוב בתאים.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="a2">
+    <div class="step-top">
+      <div class="num"><span>2</span></div>
+      <div class="step-txt"><h3>משתפים את הגיליון לצפייה, ומעתיקים את הקישור</h3><p class="short">"שיתוף", ואז "כל מי שיש לו את הקישור", צופה.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <details><summary>הסבר מלא <span class="hint">איפה זה ומה בוחרים</span></summary><div class="more">
+        <ol>
+          <li>למעלה מצד שמאל של הגיליון יש כפתור כחול <span class="q">"שיתוף"</span>. לוחצים עליו.</li>
+          <li>בחלון שנפתח מחפשים את הכותרת <span class="q">"גישה כללית"</span>. כרגע כתוב שם "מוגבלת".</li>
+          <li>לוחצים על "מוגבלת" ובוחרים <span class="q">"כל מי שיש לו את הקישור"</span>.</li>
+          <li>מימין לזה בודקים שכתוב <span class="q">"צופה"</span>, ולא "עורך".</li>
+          <li>לוחצים <span class="q">"העתקת קישור"</span>, ואז <span class="q">"סיום"</span>. הקישור שמור עכשיו בזיכרון של המחשב, ונדביק אותו בצעד 4.</li>
+        </ol>
+        <div class="shot"><div class="shot-cap">כך נראה חלון השיתוף</div><div class="dialog">
+          <h4>שיתוף "עותק של הגיליון"</h4>
+          <small style="color:#5f6368">גישה כללית</small>
+          <div class="field"><b>כל מי שיש לו את הקישור</b><small>צופה</small></div>
+          <div class="gbtns"><span class="gbtn on">העתקת קישור</span><span class="gbtn blue">סיום</span></div>
+        </div></div>
+        <div class="why"><b>למה צריך את זה?</b> האתר צריך לקרוא את הגיליון. "צופה" אומר שאפשר לקרוא, אבל אף אחד לא יכול לשנות לכם כלום.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="a3">
+    <div class="step-top">
+      <div class="num"><span>3</span></div>
+      <div class="step-txt"><h3>מורידים את קובץ הקטלוג</h3><p class="short">קובץ אחד בשם index.html. הוא יגיע לתיקיית ההורדות.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <a class="cta" data-href="CATALOG_START" download>הורדת index.html</a>
+      <details><summary>הסבר מלא <span class="hint">מה זה הקובץ הזה</span></summary><div class="more">
+        <p>זה הקטלוג שבנינו בשבוע שעבר, בלי חיבור לגיליון. כל האתר הוא הקובץ הזה.</p>
+        <ol>
+          <li>לוחצים על הכפתור. הקובץ יורד לתיקיית <span class="q">"הורדות"</span> במחשב.</li>
+          <li>לא צריך לפתוח אותו עכשיו. בצעד הבא מעלים אותו לבינה.</li>
+        </ol>
+        <div class="careful"><b>שימו לב:</b> אם הקובץ נפתח בוורד או בפנקס רשימות, סוגרים בלי לשמור. הוא נפתח רק בכרום.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="a4">
+    <div class="step-top">
+      <div class="num"><span>4</span></div>
+      <div class="step-txt"><h3>מבקשים מהבינה לחבר את הקטלוג לגיליון</h3><p class="short">צ'אט חדש, מעלים את הקובץ ומדביקים את הפרומפט עם הקישור שלכם.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <div class="copy" data-key="P_LINK" data-label="פרומפט החיבור"></div>
+      <details><summary>הסבר מלא <span class="hint">איך מעלים קובץ, ואיפה מדביקים את הקישור</span></summary><div class="more">
+        <ol>
+          <li>פותחים צ'אט חדש ב-ChatGPT, ב-Gemini או ב-Claude. <b>בג'מיני בלבד:</b> בוחרים בכלים <span class="q">Canvas</span> לפני שכותבים.</li>
+          <li>מעלים את הקובץ: לוחצים על <span class="q">+</span> או על סמל האטב ליד תיבת הכתיבה, ובוחרים את index.html מתיקיית ההורדות.</li>
+          <li>לוחצים "העתקה" על הפרומפט כאן למעלה, ומדביקים בתיבת הכתיבה (<span class="kbd">Ctrl+V</span>).</li>
+          <li>בשורה האחרונה מוחקים את <span class="fill-in">[להדביק כאן]</span> ומדביקים במקומו את הקישור לגיליון מצעד 2.</li>
+          <li>שולחים.</li>
+        </ol>
+        <div class="why"><b>למה הקובץ ולא רק הפרומפט?</b> כדי שהבינה תעבוד על הקטלוג שכבר קיים, ולא תבנה אחד חדש.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="a5">
+    <div class="step-top">
+      <div class="num"><span>5</span></div>
+      <div class="step-txt"><h3>שומרים את הקובץ שחזר, ופותחים אותו בכרום</h3><p class="short">הפריטים מהגיליון שלכם מופיעים בקטלוג.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <details><summary>הסבר מלא <span class="hint">מה עושים עם הקוד שחזר</span></summary><div class="more">
+        <p><b>אם יש כפתור הורדה</b> (סמל חץ למטה, או "Download"): מורידים, וזה הכל.</p>
+        <p><b>אם יש רק קוד:</b></p>
+        <ol>
+          <li>לוחצים על "העתקה" או "Copy" בפינת הקוד.</li>
+          <li>פותחים פנקס רשימות (Notepad), מדביקים, ובוחרים "קובץ", "שמירה בשם".</li>
+          <li>שם הקובץ: <span class="ltr q">index.html</span>. בשדה "שמירה כסוג" בוחרים <span class="q">"כל הקבצים"</span>. קידוד: <span class="ltr">UTF-8</span>.</li>
+        </ol>
+        <p><b>פותחים בכרום:</b> לחיצה ימנית על הקובץ, "פתיחה באמצעות", Google Chrome.</p>
+        <div class="ok"><b>הצלחתם אם:</b> רואים את הפריטים מהגיליון. בדיקה: מוסיפים שורה בגיליון, מרעננים את הדף (<span class="kbd">F5</span>), והיא מופיעה.</div>
+      </div></details>
+    </div>
+  </article>
+</section>
+
+<!-- ================= part B ================= -->
+<section class="part" id="b">
+  <div class="part-head">
+    <span class="tag">חלק ב'</span>
+    <h2>טופס הרשמה <span class="mark">שכותב לגיליון</span></h2>
+    <p>בסוף החלק הזה: כפתור "להרשמה" בכל פריט בקטלוג. כל מי שנרשם מופיע כשורה חדשה בגיליון שלכם.</p>
+    <div class="meta">6 צעדים · כ-15 דקות · עובדים באותו גיליון מחלק א'</div>
+  </div>
+
+  <article class="step" data-id="b1">
+    <div class="step-top">
+      <div class="num"><span>1</span></div>
+      <div class="step-txt"><h3>פותחים את Apps Script מתוך הגיליון</h3><p class="short">בתפריט למעלה: "תוספים", ואז "Apps Script".</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <details><summary>הסבר מלא <span class="hint">איפה נמצא "תוספים"</span></summary><div class="more">
+        <div class="shot"><div class="shot-cap">שורת התפריטים בראש הגיליון</div>
+          <div class="menubar"><i>קובץ</i><i>עריכה</i><i>תצוגה</i><i>הוספה</i><i>עיצוב</i><i>נתונים</i><i>כלים</i><i class="on">תוספים</i><i>עזרה</i></div>
+          <div class="dropdown"><div>תוספים לגיליון</div><div>פקודות מאקרו</div><div class="on">Apps Script</div></div>
+        </div>
+        <ol>
+          <li>בגיליון שלכם, בשורת התפריטים העליונה, לוחצים <span class="q">"תוספים"</span>.</li>
+          <li>בתפריט שנפתח: <span class="q">"Apps Script"</span>. נפתחת לשונית חדשה, ובה קוד קצר.</li>
+        </ol>
+        <div class="careful"><b>הגיליון באנגלית?</b> התפריט נקרא Extensions.</div>
+        <div class="why"><b>למה מתוך הגיליון?</b> כך הסקריפט "יושב" בתוך הגיליון הזה ויודע לכתוב אליו. לא צריך לתת לו שום קישור.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="b2">
+    <div class="step-top">
+      <div class="num"><span>2</span></div>
+      <div class="step-txt"><h3>מדביקים את הסקריפט המוכן, ושומרים</h3><p class="short">מוחקים את מה שכתוב, מדביקים, ושומרים. לא משנים כלום בקוד.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <div class="copy" data-key="READY_SCRIPT" data-label="הסקריפט המוכן" data-code="1"></div>
+      <details><summary>הסבר מלא <span class="hint">איך מחליפים את הקוד</span></summary><div class="more">
+        <ol>
+          <li>לוחצים "העתקה" על הסקריפט כאן למעלה.</li>
+          <li>בלשונית של Apps Script, לוחצים בתוך אזור הקוד.</li>
+          <li>מסמנים הכל (<span class="kbd">Ctrl+A</span>) ומוחקים (<span class="kbd">Delete</span>).</li>
+          <li>מדביקים (<span class="kbd">Ctrl+V</span>).</li>
+          <li>שומרים: סמל הדיסקט למעלה, או <span class="kbd">Ctrl+S</span>.</li>
+        </ol>
+        <div class="why"><b>מה הסקריפט עושה?</b> מקבל מהקטלוג שם, מייל וטלפון, וכותב אותם כשורה בלשונית "נרשמים". את הלשונית הוא יוצר לבד.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="b3">
+    <div class="step-top">
+      <div class="num"><span>3</span></div>
+      <div class="step-txt"><h3>פורסים: מעלים את הסקריפט לאוויר</h3><p class="short">"פריסה", "פריסה חדשה", "אפליקציית אינטרנט". גישה: כל אחד.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <details><summary>הסבר מלא <span class="hint">כל לחיצה, לפי הסדר</span></summary><div class="more">
+        <p><b>פריסה</b> היא להעלות את הסקריפט לאוויר, ולקבל לו כתובת באינטרנט.</p>
+        <ol>
+          <li>למעלה מצד שמאל: הכפתור הכחול <span class="q">"פריסה"</span>, ואז <span class="q">"פריסה חדשה"</span>.</li>
+          <li>ליד "בחירת סוג" יש גלגל שיניים. לוחצים עליו ובוחרים <span class="q">"אפליקציית אינטרנט"</span>.</li>
+          <li>"הפעלה בתור": <span class="q">"אני"</span>.</li>
+          <li>"למי יש גישה": <span class="q">"כל אחד"</span>.</li>
+          <li>לוחצים <span class="q">"פריסה"</span>.</li>
+        </ol>
+        <div class="shot"><div class="shot-cap">חלון "פריסה חדשה"</div><div class="dialog">
+          <div class="field"><small>בחירת סוג</small><b>אפליקציית אינטרנט</b></div>
+          <div class="field"><small>הפעלה בתור</small><b>אני</b></div>
+          <div class="field"><small>למי יש גישה</small><b>כל אחד</b></div>
+          <div class="gbtns"><span class="gbtn blue on">פריסה</span><span class="gbtn">ביטול</span></div>
+        </div></div>
+        <div class="why"><b>למה "כל אחד"?</b> כי מי שנרשם באתר לא מחובר לחשבון שלכם. "כל אחד" יכול לשלוח לסקריפט, אבל לא לראות את הגיליון.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="b4">
+    <div class="step-top">
+      <div class="num"><span>4</span></div>
+      <div class="step-txt"><h3>מאשרים הרשאות</h3><p class="short">"מתן הרשאות גישה", בוחרים חשבון, "מתקדם", "מעבר אל...", "אישור".</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <details><summary>הסבר מלא <span class="hint">המסך המפחיד, ולמה הוא בסדר</span></summary><div class="more">
+        <ol>
+          <li>לוחצים <span class="q">"מתן הרשאות גישה"</span> ובוחרים את החשבון שלכם.</li>
+          <li>מופיע מסך <span class="q">"Google לא אימתה את האפליקציה הזו"</span>. זה תקין.</li>
+          <li>לוחצים על הקישור הקטן <span class="q">"מתקדם"</span> (Advanced) בתחתית.</li>
+          <li>לוחצים <span class="q">"מעבר אל... (לא בטוח)"</span>.</li>
+          <li>בחלון הבא גוללים למטה ולוחצים <span class="q">"אישור"</span> (Allow).</li>
+        </ol>
+        <div class="why"><b>למה זה בטוח?</b> גוגל מזהיר על כל סקריפט שלא עבר בדיקה שלו. כאן זה הסקריפט שלכם, שרץ בחשבון שלכם, ונוגע רק בגיליון הזה.</div>
+        <div class="careful"><b>חשוב:</b> בלי האישור הזה הסקריפט לא יעבוד.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="b5">
+    <div class="step-top">
+      <div class="num"><span>5</span></div>
+      <div class="step-txt"><h3>מעתיקים את קישור ה-URL עם הסיומת <bdi>/exec</bdi>, ובודקים אותו</h3><p class="short">מדביקים אותו בלשונית חדשה בכרום. צריך להופיע "הסקריפט עובד".</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <details><summary>הסבר מלא <span class="hint">איזה מהקישורים להעתיק</span></summary><div class="more">
+        <p>אחרי הפריסה נפתח חלון עם שני דברים ארוכים. מעתיקים את זה שכתוב מעליו <span class="q">"אפליקציית אינטרנט: כתובת URL"</span>.</p>
+        <div class="shot"><div class="shot-cap">כך נראה הקישור הנכון. הסוף שלו הוא הסימן</div>
+          <div class="url">https://script.google.com/macros/s/AKfycb...xyz/<b>exec</b></div></div>
+        <ol>
+          <li>לוחצים "העתקה" ליד הקישור.</li>
+          <li>פותחים לשונית חדשה בכרום, מדביקים, ולוחצים <span class="kbd">Enter</span>.</li>
+        </ol>
+        <div class="ok"><b>הצלחתם אם:</b> בדף ריק כתוב רק "הסקריפט עובד".</div>
+        <div class="careful"><b>לא להתבלבל:</b> "מזהה הפריסה" הוא רצף אותיות בלי https בהתחלה. הוא לא מתאים. צריך את הקישור שנגמר ב-<bdi>/exec</bdi>.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="b6">
+    <div class="step-top">
+      <div class="num"><span>6</span></div>
+      <div class="step-txt"><h3>מוסיפים לקטלוג כפתור הרשמה</h3><p class="short">באותה שיחה של חלק א': מדביקים את הפרומפט, עם הקישור מצעד 5.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <div class="copy" data-key="P_SCRIPT_LINK" data-label="פרומפט כפתור ההרשמה"></div>
+      <details><summary>הסבר מלא <span class="hint">ואיך בודקים שזה עובד</span></summary><div class="more">
+        <ol>
+          <li>חוזרים לשיחה שבה חיברתם את הקטלוג לגיליון.</li>
+          <li>מדביקים את הפרומפט. במקום <span class="fill-in">[להדביק כאן]</span> מדביקים את הקישור שנגמר ב-<bdi>/exec</bdi>.</li>
+          <li>שומרים את הקובץ שחזר ופותחים בכרום, בדיוק כמו בצעד 5 של חלק א'.</li>
+          <li>לוחצים "להרשמה" על פריט, ממלאים ושולחים.</li>
+        </ol>
+        <div class="careful"><b>אין את השיחה?</b> פותחים צ'אט חדש ומצרפים את קובץ הקטלוג שלכם יחד עם הפרומפט.</div>
+        <div class="ok"><b>הצלחתם אם:</b> בגיליון הופיעה לשונית חדשה "נרשמים", ובה השורה שמילאתם.</div>
+      </div></details>
+    </div>
+  </article>
+</section>
+
+<!-- ================= part C ================= -->
+<section class="part" id="c">
+  <div class="part-head">
+    <span class="tag">חלק ג'</span>
+    <h2>דף למידה וחזרה, <span class="mark">מאפס</span></h2>
+    <p>בסוף החלק הזה: דף לתלמידים עם הסבר ושלוש שאלות. התשובות נכנסות לגיליון שלכם, ושם כותבים משוב וציון.</p>
+    <div class="meta">6 צעדים · כ-20 דקות · גיליון חדש</div>
+  </div>
+
+  <article class="step" data-id="c1">
+    <div class="step-top">
+      <div class="num"><span>1</span></div>
+      <div class="step-txt"><h3>גיליון חדש עם שלוש שאלות</h3><p class="short">בתא A1 כותבים "שאלה", ומתחתיו שלוש שאלות. משתפים ומעתיקים את הקישור.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <a class="cta alt" href="https://sheets.new" target="_blank" rel="noopener">פתיחת גיליון חדש</a>
+      <details><summary>הסבר מלא <span class="hint">איך הגיליון צריך להיראות</span></summary><div class="more">
+        <div class="shot"><div class="shot-cap">הגיליון שלכם, בדיוק ככה</div>
+          <table class="sheet"><tr><th></th><th>A</th></tr><tr><th>1</th><td class="h">שאלה</td></tr><tr><th>2</th><td>מהו כוכב הלכת הגדול ביותר?</td></tr><tr><th>3</th><td>למה יש יום ולילה?</td></tr><tr><th>4</th><td>מה ההבדל בין כוכב לכוכב לכת?</td></tr></table>
+        </div>
+        <ol>
+          <li>פותחים גיליון חדש (הכפתור כאן, או sheets.new בשורת הכתובת).</li>
+          <li>בתא A1 כותבים בדיוק: <span class="q">שאלה</span>.</li>
+          <li>בתאים A2, A3, A4 כותבים שלוש שאלות פתוחות, שאלה בכל תא.</li>
+          <li>משתפים לצפייה ומעתיקים את הקישור, בדיוק כמו בצעד 2 של חלק א'.</li>
+        </ol>
+        <div class="why"><b>ושם התלמיד?</b> אותו לא כותבים כאן. התלמיד ממלא אותו בדף, והוא נכנס לבד ללשונית "תשובות" בצעד 4.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="c2">
+    <div class="step-top">
+      <div class="num"><span>2</span></div>
+      <div class="step-txt"><h3>מבקשים מהבינה לבנות את הדף</h3><p class="short">צ'אט חדש. מדביקים את הפרומפט, וממלאים נושא, גיל, רמה והקישור.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <div class="copy" data-key="P_PAGE" data-label="פרומפט הדף"></div>
+      <details><summary>הסבר מלא <span class="hint">מה ממלאים בסוגריים</span></summary><div class="more">
+        <ol>
+          <li>פותחים צ'אט חדש. בג'מיני בוחרים Canvas.</li>
+          <li>מדביקים את הפרומפט, ומחליפים כל <span class="fill-in">[...]</span> צהוב בתוכן שלכם. למשל: נושא: מערכת השמש. גיל: כיתה ה'. רמה: בינונית.</li>
+          <li>בשורה האחרונה מדביקים את הקישור לגיליון מצעד 1.</li>
+          <li>שולחים, שומרים את הקובץ ופותחים בכרום, כמו בחלק א'.</li>
+        </ol>
+        <div class="careful"><b>יש לכם מצגת על הנושא?</b> מצרפים אותה לצ'אט, ומוסיפים בתחילת הפרומפט: "מצורפת מצגת שלי על הנושא. בסס את ההסבר על הקובץ המצורף."</div>
+        <div class="ok"><b>הצלחתם אם:</b> הדף מציג הסבר ואת שלוש השאלות שכתבתם בגיליון. בשלב הזה הכפתור "סיימתי" עוד לא שולח לשום מקום, וזה תקין.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="c3">
+    <div class="step-top">
+      <div class="num"><span>3</span></div>
+      <div class="step-txt"><h3>מבקשים סקריפט ששומר את התשובות, ופורסים אותו</h3><p class="short">באותה שיחה. מדביקים את הסקריפט שחזר בגיליון של השאלות, ופורסים.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <div class="copy" data-key="P_ANSWERS" data-label="פרומפט שמירת התשובות"></div>
+      <details><summary>הסבר מלא <span class="hint">אותו תהליך כמו בחלק ב'</span></summary><div class="more">
+        <ol>
+          <li>באותה שיחה של הדף, מדביקים את הפרומפט ושולחים.</li>
+          <li>הבינה תחזיר סקריפט. מעתיקים אותו.</li>
+          <li>בגיליון של השאלות: <span class="q">"תוספים"</span>, <span class="q">"Apps Script"</span>, מוחקים את מה שכתוב, מדביקים ושומרים. <a href="#b" data-open="b1">ראו חלק ב', צעד 1</a></li>
+          <li>פורסים ומאשרים הרשאות, בדיוק כמו בחלק ב', צעדים 3 ו-4.</li>
+        </ol>
+        <div class="careful"><b>חשוב:</b> מדביקים בגיליון של השאלות, לא בגיליון של הקטלוג.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="c4">
+    <div class="step-top">
+      <div class="num"><span>4</span></div>
+      <div class="step-txt"><h3>נותנים לבינה את קישור ה-URL, ובודקים</h3><p class="short">מדביקים בשיחה את הקישור עם הסיומת <bdi>/exec</bdi>, ומורידים את הדף המעודכן.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <details><summary>הסבר מלא <span class="hint">ואיפה התשובות מופיעות</span></summary><div class="more">
+        <ol>
+          <li>מעתיקים את קישור ה-URL שנוצר אחרי הפריסה, זה שנגמר ב-<bdi>/exec</bdi>.</li>
+          <li>מדביקים אותו בשיחה, למשל: <span class="q">"זה הקישור של הסקריפט שלי:"</span> ואחריו הקישור.</li>
+          <li>שומרים את הדף המעודכן שחזר, ופותחים בכרום.</li>
+          <li>ממלאים שם, עונים על השאלות ולוחצים "סיימתי, שלח למורה".</li>
+        </ol>
+        <div class="shot"><div class="shot-cap">בתחתית הגיליון נוספה לשונית חדשה</div>
+          <table class="sheet"><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr>
+            <tr><th>1</th><td class="h">שם התלמיד</td><td class="h">מייל</td><td class="h">שאלה</td><td class="h">תשובה</td><td class="h">משוב</td><td class="h">ציון</td></tr>
+            <tr><th>2</th><td>נועה</td><td></td><td>מהו כוכב הלכת...</td><td>צדק</td><td></td><td></td></tr></table>
+          <div class="tabs"><span>גיליון1</span><span class="on">תשובות</span></div>
+        </div>
+        <div class="ok"><b>הצלחתם אם:</b> בגיליון הופיעה לשונית "תשובות", ובה שורה לכל שאלה.</div>
+        <div class="why"><b>למה לשונית נפרדת?</b> בלשונית הראשונה כל שאלה כתובה פעם אחת. בלשונית "תשובות" כל שאלה חוזרת אצל כל תלמיד, עם התשובה שלו. כך השאלות שלכם לא מתערבבות עם התשובות.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="c5">
+    <div class="step-top">
+      <div class="num"><span>5</span></div>
+      <div class="step-txt"><h3>כותבים משוב וציון</h3><p class="short">בלשונית "תשובות", בעמודות "משוב" ו"ציון". ידנית, אחרי שקוראים.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <details><summary>הסבר מלא <span class="hint">מי רואה את הציון</span></summary><div class="more">
+        <p>הדף לא בודק ולא נותן ציון לבד. המורה קוראת כל תשובה, וכותבת משוב וציון בשורה שלה.</p>
+        <div class="why"><b>מי רואה?</b> רק אתם, בגיליון. התלמיד לא רואה את הציון, אלא אם עושים את צעד 6.</div>
+      </div></details>
+    </div>
+  </article>
+
+  <article class="step" data-id="c6">
+    <div class="step-top">
+      <div class="num"><span>6</span></div>
+      <div class="step-txt"><h3>רשות: שולחים לכל תלמיד את המשוב והציון במייל</h3><p class="short">באותה שיחה: הפרומפט, ואז פורסים <b>גרסה חדשה</b> של הסקריפט.</p></div>
+      <label class="tick"><input type="checkbox">עשיתי</label>
+    </div>
+    <div class="step-body">
+      <div class="copy" data-key="P_SEND" data-label="פרומפט שליחת המשוב"></div>
+      <details><summary>הסבר מלא <span class="hint">גרסה חדשה, לא פריסה חדשה</span></summary><div class="more">
+        <ol>
+          <li>באותה שיחה, מדביקים את הפרומפט.</li>
+          <li>ב-Apps Script מחליפים את הקוד בסקריפט החדש, ושומרים.</li>
+          <li>מעדכנים את הפריסה: <span class="q">"פריסה"</span>, <span class="q">"ניהול פריסות"</span>, סמל העיפרון, ב"גרסה" בוחרים <span class="q">"גרסה חדשה"</span>, ואז <span class="q">"פריסה"</span>.</li>
+          <li>חוזרים לגיליון ומרעננים (<span class="kbd">F5</span>). בתפריט למעלה מופיע "שליחת משוב".</li>
+          <li>בפעם הראשונה גוגל יבקש שוב אישור הרשאות, כי עכשיו הסקריפט שולח מיילים. מאשרים כמו בחלק ב', צעד 4.</li>
+        </ol>
+        <div class="why"><b>למה "גרסה חדשה" ולא "פריסה חדשה"?</b> גרסה חדשה שומרת על אותו קישור, והדף ממשיך לעבוד. פריסה חדשה נותנת קישור אחר, ואז צריך לתת אותו שוב לבינה ולהוריד דף חדש.</div>
+        <div class="ok"><b>הצלחתם אם:</b> תלמיד שהשאיר מייל קיבל מייל עם התשובות שלו, המשוב והציון. כדאי לנסות קודם עם המייל שלכם.</div>
+      </div></details>
+    </div>
+  </article>
+</section>
+
+<!-- ================= help ================= -->
+<section class="part" id="help">
+  <div class="part-head">
+    <span class="tag">כשנתקעים</span>
+    <h2>מה רואים, <span class="mark">ומה עושים</span></h2>
+    <p>לוחצים על מה שקורה אצלכם.</p>
+  </div>
+  <details class="fix"><summary>הקישור לא מראה "הסקריפט עובד"</summary><div class="more">
+    <p><b>למה:</b> הקוד לא נשמר לפני הפריסה, או שההרשאות לא אושרו.</p>
+    <p><b>מה עושים:</b> ב-Apps Script שומרים (<span class="kbd">Ctrl+S</span>). אחר כך "פריסה", "ניהול פריסות", עיפרון, "גרסה חדשה", "פריסה". אם מופיע מסך הרשאות, מאשרים.</p>
+  </div></details>
+  <details class="fix"><summary>הקישור פותח מסך התחברות לגוגל</summary><div class="more">
+    <p><b>למה:</b> בפריסה נבחר "למי יש גישה" אחר מ"כל אחד".</p>
+    <p><b>מה עושים:</b> "פריסה", "ניהול פריסות", עיפרון, "למי יש גישה": "כל אחד", "פריסה".</p>
+  </div></details>
+  <details class="fix"><summary>כתוב "ההרשמה לא נשלחה", או שהתשובות לא מגיעות</summary><div class="more">
+    <p><b>למה:</b> הסקריפט לא באוויר, או שבדף יש קישור לא נכון.</p>
+    <p><b>מה עושים:</b> פותחים את הקישור שנגמר ב-<bdi>/exec</bdi> בלשונית חדשה. אם כתוב "הסקריפט עובד", מדביקים אותו שוב בשיחה ומבקשים לעדכן את הקובץ.</p>
+  </div></details>
+  <details class="fix"><summary>כפתור ההרשמה אפור, או לא עושה כלום</summary><div class="more">
+    <p><b>למה:</b> הקישור לא נכנס לקובץ, או שהועתק "מזהה הפריסה" במקום הקישור.</p>
+    <p><b>מה עושים:</b> מעתיקים את הקישור שמתחיל ב-https ונגמר ב-<bdi>/exec</bdi>, ומדביקים שוב את הפרומפט.</p>
+  </div></details>
+  <details class="fix"><summary>שיניתי את הסקריפט, ושום דבר לא השתנה</summary><div class="more">
+    <p><b>למה:</b> שמירה לבד לא מספיקה. האתר פונה לגרסה שפורסמה.</p>
+    <p><b>מה עושים:</b> "פריסה", "ניהול פריסות", עיפרון, "גרסה חדשה", "פריסה".</p>
+  </div></details>
+  <details class="fix"><summary>הקובץ נפתח כטקסט או בוורד, ולא כאתר</summary><div class="more">
+    <p><b>למה:</b> הקובץ נשמר בשם index.html.txt, או נפתח בתוכנה הלא נכונה.</p>
+    <p><b>מה עושים:</b> שומרים שוב, עם "שמירה כסוג": "כל הקבצים". פותחים בלחיצה ימנית, "פתיחה באמצעות", Chrome.</p>
+  </div></details>
+  <details class="fix"><summary>הקטלוג או הדף ריקים</summary><div class="more">
+    <p><b>למה:</b> הגיליון לא משותף לצפייה, או שהכותרת בתא A1 שונה.</p>
+    <p><b>מה עושים:</b> בודקים ב"שיתוף" שכתוב "כל מי שיש לו את הקישור". בדף הלמידה בודקים שבתא A1 כתוב בדיוק "שאלה".</p>
+  </div></details>
+  <div class="why" style="margin-top:14px"><b>ואם זה לא אחד מאלה:</b> מצלמים את המסך, מעלים את הצילום לשיחה עם הבינה, וכותבים מה ניסיתם לעשות.</div>
+</section>
+
+<!-- ================= glossary ================= -->
+<section class="part" id="words">
+  <div class="part-head">
+    <span class="tag">מילון</span>
+    <h2>המילים, <span class="mark">בשפה פשוטה</span></h2>
+  </div>
+  <dl class="gloss">
+    <div><dt>גיליון</dt><dd>קובץ של גוגל שיטס. כל הנתונים שלכם יושבים בו.</dd></div>
+    <div><dt>לשונית</dt><dd>דף בתוך הגיליון. רואים את הלשוניות בתחתית המסך. לגיליון אחד יכולות להיות כמה לשוניות.</dd></div>
+    <div><dt>קישור שיתוף</dt><dd>הקישור לגיליון. ב"צופה" אפשר רק לקרוא אותו. כך האתר קורא מהגיליון.</dd></div>
+    <div><dt>Apps Script</dt><dd>המקום בגוגל שבו כותבים קוד שעובד עם הגיליון. נפתח מ"תוספים".</dd></div>
+    <div><dt>סקריפט</dt><dd>קוד קצר שמבצע פעולה. אצלנו: מקבל מידע מהאתר וכותב אותו בגיליון.</dd></div>
+    <div><dt>פריסה</dt><dd>להעלות את הסקריפט לאוויר ולקבל לו כתובת באינטרנט.</dd></div>
+    <div><dt>קישור ה-URL עם <bdi>/exec</bdi></dt><dd>הכתובת שמקבלים אחרי הפריסה. דרכה האתר שולח מידע לסקריפט.</dd></div>
+    <div><dt>גרסה חדשה</dt><dd>עדכון של סקריפט שכבר פורסם. שומר על אותו קישור.</dd></div>
+    <div><dt>index.html</dt><dd>הקובץ של האתר. פותחים אותו בכרום, וזה האתר.</dd></div>
+    <div><dt>Canvas</dt><dd>מצב עבודה בג'מיני שמציג את הקוד ואת התוצאה זה לצד זה.</dd></div>
+  </dl>
+</section>
+
+<section class="end">
+  <h2>סיימתם. <span class="mark">כל הכבוד!</span></h2>
+  <p>עכשיו יש לכם אתר שקורא מהגיליון וגם כותב אליו. אותו עיקרון מתאים לכל טופס: הרשמה, סקר, משוב, הזמנות.</p>
+</section>
+
+</main>
+<footer>שירה רוט זליקוביץ · לומדות · lomdot.org</footer>
+
+<script>
+var DATA = {"P_LINK": "מצורף קובץ HTML של קטלוג.\nהוסף לקובץ את הקישור לגיליון הגוגל שלי, כדי שהקטלוג יציג את הפעילויות מהגיליון.\nהצג לי את הקטלוג המלא והעובד בתצוגה מקדימה, עם כל הקוד של הקובץ ולא רק השורה שהשתנתה.\nשמור על העיצוב ועל שאר הקוד בדיוק כמו שהם.\n\nהקישור לגיליון שלי: [להדביק כאן]", "P_SCRIPT_LINK": "חבר את כפתור ההרשמה בקטלוג לסקריפט שלי, כדי שכל הרשמה תיכתב כשורה חדשה בגיליון.\nהצג לי את הקטלוג המלא והעובד בתצוגה מקדימה, עם כל הקוד של הקובץ ולא רק השורה שהשתנתה.\nשמור על העיצוב ועל שאר הקוד בדיוק כמו שהם.\n\nכתובת הסקריפט שלי: [להדביק כאן]", "P_PAGE": "בנה לי דף למידה וחזרה מעוצב לתלמידים.\nנושא: [הנושא]\nגיל: [הגיל או הכיתה]\nרמה: [קלה / בינונית / מאתגרת]\n\nבדף: הסבר קצר וברור על הנושא, מותאם לגיל ולרמה, ואחריו 3 שאלות פתוחות עם מקום למילוי התשובה, שדה לשם התלמיד, ושדה למייל של התלמיד (לא חובה).\nבסוף הדף כפתור אחד: \"סיימתי, שלח למורה\". בלי סיכום תשובות ובלי בדיקה אוטומטית.\nאת השאלות קרא מגיליון הגוגל שלי, מהעמודה \"שאלה\".\nהחזר לי קובץ אחד בשם index.html.\n\nהקישור לגיליון שלי: [להדביק כאן]", "P_ANSWERS": "עכשיו אני רוצה שהתשובות יישמרו בגיליון, כדי שאוכל לתת לכל תלמיד משוב וציון.\nכתוב לי Apps Script שמקבל מהדף את שם התלמיד, המייל והתשובות, וכותב אותן בלשונית \"תשובות\", עם העמודות: שם התלמיד, מייל, שאלה, תשובה, משוב, ציון. שורה לכל שאלה. את \"משוב\" ו\"ציון\" אמלא בעצמי.\nעדכן את הדף כך שהכפתור \"סיימתי, שלח למורה\" ישלח את התשובות לסקריפט.\nהסבר לי צעד אחרי צעד איך להדביק את הסקריפט ולפרוס אותו.", "P_SEND": "עכשיו אני רוצה שכל תלמיד יקבל את המשוב והציון שלו במייל.\nהוסף לגיליון תפריט \"שליחת משוב\": לחיצה שולחת לכל תלמיד שהשאיר מייל את השאלות, התשובות, המשוב והציון שלו.\nהסבר לי צעד אחרי צעד מה לעשות.", "SHEET_COPY": "https://docs.google.com/spreadsheets/d/1a_yCmokxfGmA2sFucqcoknqwR8Ry7FlrZn3SKHjaqg4/copy", "CATALOG_START": "https://drive.google.com/uc?export=download&id=1409Lb8rYRU_r28l6Iv_y6gFbQPqT7Rdt", "READY_SCRIPT": "/**\n * סקריפט ההרשמה של הקטלוג\n * מקבל את פרטי הטופס מהקטלוג, וכותב אותם כשורה חדשה בלשונית \"נרשמים\".\n * אין מה לשנות בקוד: מדביקים, שומרים ופורסים.\n *\n * @OnlyCurrentDoc\n */\n\nvar TAB = 'נרשמים';\nvar HEADERS = ['זמן', 'פריט', 'שם', 'מייל', 'טלפון'];\n\n// הקטלוג פונה לכתובת של הסקריפט, והפונקציה הזו עונה לו\nfunction doGet(e) {\n  var p = (e && e.parameter) || {};\n\n  // פתחתם את הכתובת בדפדפן, בלי טופס? זה סימן שהפריסה הצליחה\n  if (!p.callback) {\n    return ContentService.createTextOutput('הסקריפט עובד');\n  }\n\n  var answer = register(p);\n  return ContentService\n    .createTextOutput(p.callback + '(' + JSON.stringify(answer) + ')')\n    .setMimeType(ContentService.MimeType.JAVASCRIPT);\n}\n\n// כותב שורה אחת בלשונית \"נרשמים\"\nfunction register(p) {\n  if (!p.name || !p.email) {\n    return { ok: false, msg: 'חסרים פרטים' };\n  }\n\n  // אם שני אנשים נרשמים באותה שנייה, הם נכתבים אחד אחרי השני\n  var lock = LockService.getScriptLock();\n  lock.waitLock(10000);\n  try {\n    var sheet = getTab();\n    sheet.appendRow([new Date(), p.item || '', p.name, p.email, p.phone || '']);\n    return { ok: true, msg: 'נרשמת בהצלחה' };\n  } finally {\n    lock.releaseLock();\n  }\n}\n\n// מחזיר את הלשונית \"נרשמים\". אם היא לא קיימת, יוצר אותה עם שורת כותרת\nfunction getTab() {\n  var file = SpreadsheetApp.getActiveSpreadsheet();\n  var sheet = file.getSheetByName(TAB);\n  if (!sheet) {\n    sheet = file.insertSheet(TAB);\n    sheet.setRightToLeft(true);\n    sheet.appendRow(HEADERS);\n    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');\n    sheet.setFrozenRows(1);\n    sheet.getRange('A:A').setNumberFormat('dd/MM/yyyy HH:mm');\n    sheet.getRange('E:E').setNumberFormat('@');   // טלפון נשמר כטקסט, כדי שה-0 בהתחלה לא ייעלם\n  }\n  return sheet;\n}"};
+
+/* copy boxes: the prompts and the script come from the deck, one source */
+document.querySelectorAll('.copy').forEach(function(box){
+  var text = DATA[box.dataset.key] || '';
+  var isCode = box.dataset.code === '1';
+  box.innerHTML = '<div class="copy-head"><b></b><button type="button" class="copy-btn">העתקה</button></div><pre></pre>';
+  box.querySelector('b').textContent = box.dataset.label;
+  var pre = box.querySelector('pre');
+  if (isCode){ pre.className = 'code'; pre.textContent = text; }
+  else {
+    /* the parts to fill in are marked in yellow */
+    pre.innerHTML = text.replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; })
+                        .replace(/\[[^\]\n]+\]/g, function(m){ return '<span class="fill-in">' + m + '</span>'; });
+  }
+  var btn = box.querySelector('.copy-btn');
+  btn.addEventListener('click', function(){
+    function ok(){ btn.textContent = 'הועתק'; btn.classList.add('done'); setTimeout(function(){ btn.textContent = 'העתקה'; btn.classList.remove('done'); }, 1800); }
+    if (navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).then(ok, fallback); } else fallback();
+    function fallback(){
+      var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch(e){} ta.remove();
+    }
+  });
+});
+document.querySelectorAll('[data-href]').forEach(function(a){ a.href = DATA[a.dataset.href]; });
+
+/* "done" checkboxes and the progress bar */
+var KEY = 'madrich-harchava-v1', saved = {};
+try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){}
+var steps = [].slice.call(document.querySelectorAll('.step'));
+function paint(){
+  var n = 0;
+  steps.forEach(function(s){ var on = !!saved[s.dataset.id]; s.classList.toggle('done', on); s.querySelector('input').checked = on; if (on) n++; });
+  document.getElementById('fill').style.width = (100 * n / steps.length) + '%';
+  document.getElementById('count').textContent = n + ' מתוך ' + steps.length + ' צעדים';
+}
+steps.forEach(function(s){
+  s.querySelector('input').addEventListener('change', function(e){
+    saved[s.dataset.id] = e.target.checked;
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(err){}
+    paint();
+  });
+});
+paint();
+document.getElementById('reset').addEventListener('click', function(){
+  saved = {}; try { localStorage.removeItem(KEY); } catch(e){} paint();
+});
+
+/* open or close every explanation at once */
+var allOpen = false;
+document.getElementById('openAll').addEventListener('click', function(){
+  allOpen = !allOpen;
+  document.querySelectorAll('.step details').forEach(function(d){ d.open = allOpen; });
+  this.textContent = allOpen ? 'לסגור את כל ההסברים' : 'לפתוח את כל ההסברים';
+});
+
+/* a link to another step opens its explanation */
+document.querySelectorAll('[data-open]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var s = document.querySelector('.step[data-id="' + a.dataset.open + '"]');
+    if (!s) return;
+    e.preventDefault(); s.querySelector('details').open = true; s.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+/* the chip of the section on screen is highlighted */
+var chips = [].slice.call(document.querySelectorAll('#chips a'));
+var parts = chips.map(function(c){ return document.querySelector(c.getAttribute('href')); });
+function spy(){
+  var y = window.scrollY + 140, cur = 0;
+  parts.forEach(function(p, i){ if (p && p.offsetTop <= y) cur = i; });
+  chips.forEach(function(c, i){ c.classList.toggle('on', i === cur); });
+}
+window.addEventListener('scroll', spy, {passive:true}); spy();
+</script>
+</body>
+</html>
