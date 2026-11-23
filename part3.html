@@ -304,6 +304,7 @@ var FORM_LINK = '', QR_SVG = '', SHEET_LINK = '';
 var CODES = [];
 var READY_SCRIPT = '';
 var POSTER_1 = '', POSTER_2 = '', POSTER_3 = '';
+var FORM_QR = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNjAiIGhlaWdodD0iMzYwIiBjbGFzcz0ic2Vnbm8iPjxnIHRyYW5zZm9ybT0ic2NhbGUoOCkiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0wIDBoNDV2NDVoLTQ1eiIvPjxwYXRoIGNsYXNzPSJxcmxpbmUiIHN0cm9rZT0iIzE0MzI1YyIgZD0iTTIgMi41aDdtMiAwaDFtMSAwaDFtNCAwaDFtMSAwaDNtNSAwaDRtMSAwaDJtMSAwaDdtLTQxIDFoMW01IDBoMW0zIDBoMW0yIDBoMW0yIDBoMW0xIDBoMW0xIDBoM20zIDBoNW0xIDBoMW0xIDBoMW01IDBoMW0tNDEgMWgxbTEgMGgzbTEgMGgxbTEgMGgxbTMgMGgxbTEgMGgzbTMgMGg0bTIgMGgybTIgMGgybTIgMGgxbTEgMGgzbTEgMGgxbS00MSAxaDFtMSAwaDNtMSAwaDFtMSAwaDNtMiAwaDNtMiAwaDFtMiAwaDFtMSAwaDFtMSAwaDJtMiAwaDFtNCAwaDFtMSAwaDNtMSAwaDFtLTQxIDFoMW0xIDBoM20xIDBoMW0xIDBoMW00IDBoMW0zIDBoMW0xIDBoM20xIDBoMW0yIDBoM20zIDBoMW0xIDBoMW0xIDBoM20xIDBoMW0tNDEgMWgxbTUgMGgxbTEgMGg0bTIgMGgxbTEgMGgybTIgMGgzbTIgMGg0bTMgMGgxbTEgMGgxbTUgMGgxbS00MSAxaDdtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDdtLTMzIDFoMm0xIDBoNG0xIDBoMW0yIDBoNm0xIDBoMm0yIDBoMW0tMzEgMWgxbTEgMGg1bTQgMGgybTEgMGgxbTIgMGgxbTEgMGgxbTMgMGg1bTEgMGgxbTQgMGg1bS0zOCAxaDFtMSAwaDFtMSAwaDFtMSAwaDFtMiAwaDJtMiAwaDJtMSAwaDNtMyAwaDFtMSAwaDFtMiAwaDFtMSAwaDNtMSAwaDFtMSAwaDFtMSAwaDNtLTQxIDFoMW0yIDBoMW0xIDBoMm00IDBoMm03IDBoMm0yIDBoMW0xIDBoMm0xIDBoMW0yIDBoMW0tMzMgMWgybTEgMGgxbTEgMGgxbTIgMGg1bTIgMGgxbTQgMGgybTYgMGgxbTEgMGg0bTMgMGgxbTIgMGgxbS00MCAxaDJtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDVtMiAwaDFtMiAwaDNtMSAwaDFtNCAwaDFtNSAwaDJtLTM5IDFoM20xIDBoMW0yIDBoMW0xIDBoNG0xIDBoNG0yIDBoMm0xIDBoMW0yIDBoMW0xIDBoMW0xIDBoNW0xIDBoNG0tNDAgMWgzbTEgMGgzbTEgMGgybTIgMGgybTUgMGgxbTEgMGgxbTIgMGg2bTMgMGgxbTIgMGgybS0zMyAxaDFtMSAwaDJtMSAwaDFtMSAwaDNtNCAwaDZtMiAwaDFtNiAwaDRtLTM4IDFoMW01IDBoMW0yIDBoMW0yIDBoMW00IDBoM20yIDBoMW0xIDBoM200IDBoMW0xIDBoMW0xIDBoMW0xIDBoMm0xIDBoMW0tNDAgMWg0bTIgMGgxbTQgMGgxbTEgMGgybTEgMGgxbTEgMGg1bTIgMGgzbTEgMGgxbTEgMGgxbTEgMGgzbTEgMGgzbS00MSAxaDFtMiAwaDJtMSAwaDNtMSAwaDFtMSAwaDFtMiAwaDFtMSAwaDFtMyAwaDFtMiAwaDRtMSAwaDFtNCAwaDFtMSAwaDNtLTM5IDFoM20yIDBoMW0yIDBoM20xIDBoMW0xIDBoNm0xIDBoMW0xIDBoMm0xIDBoMW0xIDBoMW01IDBoMW0xIDBoMm0xIDBoMm0tNDAgMWg2bTIgMGgzbTQgMGgxbTQgMGgxbTIgMGg5bTMgMGg0bS0zNyAxaDNtNSAwaDFtMiAwaDFtMyAwaDFtMSAwaDFtNCAwaDFtMSAwaDVtMSAwaDhtLTQxIDFoMW0yIDBoMW0xIDBoM20xIDBoMW0zIDBoMW0yIDBoMm0yIDBoMW0xIDBoMW0yIDBoM20xIDBoMW0yIDBoMW0zIDBoMW0xIDBoMW0tMzggMWgzbTEgMGgxbTEgMGgxbTIgMGgybTEgMGgxbTEgMGgybTEgMGg0bTIgMGgxbTEgMGgybTMgMGg2bTMgMGgxbS00MSAxaDFtMiAwaDFtMSAwaDJtMSAwaDFtMSAwaDJtNSAwaDFtNCAwaDZtMSAwaDFtMSAwaDFtMSAwaDFtMyAwaDNtLTQwIDFoMW0yIDBoMW0xIDBoMW0xIDBoMm03IDBoMW0xIDBoNG0xIDBoMW02IDBoMm0yIDBoNG0yIDBoMW0tMzkgMWgxbTEgMGgzbTIgMGgxbTEgMGgybTEgMGg0bTIgMGgxbTEgMGgxbTIgMGgxbTEgMGgybTEgMGgxbTEgMGg1bS0zNSAxaDNtMiAwaDFtMSAwaDNtMyAwaDJtMiAwaDNtMSAwaDFtMiAwaDFtNCAwaDJtMyAwaDJtLTM4IDFoMm00IDBoNW0xIDBoMW0xIDBoM20yIDBoMm0xIDBoMW0yIDBoM20zIDBoM20zIDBoMm0tMzkgMWgybTIgMGgybTMgMGgxbTIgMGg0bTEgMGgybTIgMGgxbTEgMGgxbTQgMGgxbTEgMGgzbTEgMGgzbTIgMGgybS00MSAxaDFtNSAwaDJtMSAwaDNtMSAwaDJtMyAwaDFtMSAwaDJtMyAwaDFtMSAwaDFtNCAwaDRtMSAwaDNtLTQwIDFoMW0yIDBoMW0xIDBoMW0yIDBoMm0yIDBoNW00IDBoMW0xIDBoMW00IDBoMW0xIDBoMW0yIDBoM200IDBoMW0tNDEgMWgxbTEgMGgybTEgMGgybTIgMGg3bTUgMGgzbTEgMGgzbTEgMGgxbTIgMGg1bTEgMGgxbS0zMSAxaDFtMSAwaDFtMSAwaDFtMyAwaDFtMiAwaDJtMiAwaDFtNCAwaDNtMSAwaDFtMyAwaDFtMSAwaDFtMSAwaDFtLTQxIDFoN20zIDBoMW0zIDBoM20xIDBoMW0zIDBoMW0xIDBoNG0xIDBoMW0yIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0tMzkgMWgxbTUgMGgxbTEgMGgybTEgMGgybTEgMGgzbTIgMGgybTIgMGgxbTMgMGgxbTMgMGgybTMgMGgybTIgMGgxbS00MSAxaDFtMSAwaDNtMSAwaDFtMSAwaDFtMSAwaDJtMSAwaDFtMiAwaDFtMSAwaDFtMSAwaDdtMSAwaDJtMiAwaDVtMSAwaDFtMSAwaDFtLTQxIDFoMW0xIDBoM20xIDBoMW0xIDBoMW0xIDBoNm0xIDBoMW0xIDBoMW0xIDBoMW0zIDBoMW0yIDBoMW00IDBoMW0xIDBoMW0xIDBoMW0xIDBoMm0tNDEgMWgxbTEgMGgzbTEgMGgxbTEgMGg0bTEgMGg0bTMgMGgxbTMgMGg4bTEgMGg1bS0zOCAxaDFtNSAwaDFtMyAwaDNtMSAwaDVtMSAwaDNtMyAwaDJtNCAwaDFtMyAwaDJtMSAwaDFtLTQwIDFoN20xIDBoMW0xIDBoMW03IDBoMW0zIDBoMW0xIDBoM20xIDBoMm01IDBoNCIvPjwvZz48L3N2Zz4K';
 var QUESTIONS_DOC = 'https://docs.google.com/document/d/1VwDxwZyIMkoVJ3Ro88ccIqICgmIK6tA5o034aeOSlwU/copy';
 
 var BTN = 'style="display:inline-block;margin-top:14px;padding:14px 34px;font-size:26px"';
@@ -427,6 +428,9 @@ var SLIDES = [
          'מצרפים אותה ל-AI ומבקשים: "כתוב לי פרומפט שיוצר תמונה כזו"',
          'מנסים, מתקנים ומנסים שוב, עד שהתוצאה טובה']},
 
+ {kind:'moment', cls:'teal', hint:'חלק א\'', title:'<div style="font-size:44px;font-weight:800;color:var(--lm-blue-deep);margin-bottom:10px">חלק א\'</div>שאלון <span class="mark">שמכין פרומפט</span><div style="font-size:48px;font-weight:700;color:var(--lm-blue-deep);margin-top:18px">יצירת מחולל אינפוגרפיקות באמצעות שאלון שבונים עם AI</div>',
+  beats:[['1','ממלאים את השאלון'],['2','לוחצים "צור פרומפט"'],['3','הפרומפט מוכן']]},
+
  {kind:'prompt', hint:'השאלות', num:'02', eyebrow:'שלב ראשון', title:'קובעים את <span class="mark">השאלות</span>',
   label:'השאלות לדוגמה', code:Q_BIRTHDAY,
   steps:['מחליטים מה רוצים שיופיע בפוסטר',
@@ -448,15 +452,15 @@ var SLIDES = [
          'מרוצים מהתוצאה? מבקשים להוריד את כפתור הבדיקה',
          'משתפים את הקישור לשאלון, וכל אחד ממלא'], note:''},
 
+ {kind:'moment', cls:'teal', hint:'חלק ב\'', title:'<div style="font-size:44px;font-weight:800;color:var(--lm-blue-deep);margin-bottom:10px">חלק ב\'</div>הפרומפט <span class="mark">מופיע לבד</span><div style="font-size:48px;font-weight:700;color:var(--lm-blue-deep);margin-top:18px">יצירת מחולל אינפוגרפיקות באמצעות <bdi dir="ltr">Google Forms</bdi></div><div style="position:absolute;left:110px;bottom:110px;background:#fff;border-radius:18px;padding:14px;box-shadow:var(--shadow-lg);line-height:1"><img src="'+FORM_QR+'" alt="QR לשאלון" style="display:block;width:230px;height:230px"></div>',
+  beats:[['1','ממלאים את הטופס'],['2','פותחים את "פרומפטים"'],['3','הפרומפט שם']],
+  links:[['לשאלון ההיכרות','https://docs.google.com/forms/d/e/1FAIpQLSdIKxfe7OmWG-Kzaj64HCwDhfIVrnroApFbem9Uwn5tDi1xjw/viewform']]},
+
  {kind:'steps', hint:'יוצרים פוסטר', num:'05', eyebrow:'שלב רביעי', title:'יוצרים <span class="mark">פוסטר</span>',
   steps:['ממלאים את השאלון, ולוחצים "צור פרומפט"',
          '"העתקה", או "הורדה לוורד" כדי לשלוח כקובץ',
          'פותחים ChatGPT או Gemini, ומדביקים',
          'מצרפים תמונה, ושולחים']},
-
- {kind:'moment', cls:'teal', hint:'הפרומפט מופיע לבד', title:'הפרומפט <span class="mark">מופיע לבד</span>',
-  beats:[['1','ממלאים את הטופס'],['2','פותחים את "פרומפטים"'],['3','הפרומפט שם']],
-  links:[['לשאלון ההיכרות','https://docs.google.com/forms/d/e/1FAIpQLSdIKxfe7OmWG-Kzaj64HCwDhfIVrnroApFbem9Uwn5tDi1xjw/viewform']]},
 
  {kind:'steps', hint:'טופס גוגל', num:'06', eyebrow:'דרך שנייה', title:'יצירה באמצעות <span class="mark"><bdi dir="ltr">Google Forms</bdi></span>',
   steps:['פותחים <bdi dir="ltr">Google Forms</bdi> חדש',
