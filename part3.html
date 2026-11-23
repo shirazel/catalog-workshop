@@ -736,5 +736,25 @@ document.addEventListener('click',function(e){
 });
 show(cur);
 </script>
+<style>
+.gallery .trio img{cursor:zoom-in}
+#zoom{position:fixed;inset:0;z-index:9999;background:rgba(20,30,45,.88);display:none;align-items:center;justify-content:center;cursor:zoom-out}
+#zoom.on{display:flex}
+#zoom img{max-width:94vw;max-height:94vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5);background:#fff}
+</style>
+<div id="zoom"><img alt=""></div>
+<script>
+(function(){
+  var z=document.getElementById('zoom'), zi=z.querySelector('img');
+  document.addEventListener('click',function(e){
+    var im=e.target.closest&&e.target.closest('.gallery .trio img');
+    if(im){e.preventDefault();e.stopPropagation();zi.src=im.src;zi.alt=im.alt;z.classList.add('on');}
+  },true);
+  z.addEventListener('click',function(e){e.stopPropagation();z.classList.remove('on');});
+  document.addEventListener('keydown',function(e){
+    if(z.classList.contains('on')){e.stopPropagation();e.preventDefault();if(e.key==='Escape')z.classList.remove('on');}
+  },true);
+})();
+</script>
 </body>
 </html>
